@@ -12,9 +12,8 @@
         [parameter(ParameterSetName = 'Node')]
         [switch]$Exists,
 
-        [switch]$Raw,
-        [switch]$ExpandResults,
-        [switch]$ExpandRow,
+        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [string]$As = 'Parsed',
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties,
         [string]$MergePrefix = 'Neo4j',
@@ -52,6 +51,6 @@
     }
 
     Write-Verbose "Query: [$Query]"
-    $Params = . Get-ParameterValues -Properties Raw, ExpandResults, ExpandRow, MetaProperties, MergePrefix
+    $Params = . Get-ParameterValues -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
     Invoke-Neo4jQuery @Params -Query $Query
 }

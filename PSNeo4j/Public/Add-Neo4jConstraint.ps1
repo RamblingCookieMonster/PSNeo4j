@@ -12,9 +12,8 @@
         [parameter(ParameterSetName = 'Node')]
         [switch]$Exists,
 
-        [switch]$Raw,
-        [switch]$ExpandResults,
-        [switch]$ExpandRow,
+        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [string]$As = 'Parsed',
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties,
         [string]$MergePrefix = 'Neo4j',
@@ -53,6 +52,6 @@
     # TOOO: http://neo4j.com/docs/developer-manual/current/cypher/schema/constraints/#constraints-drop-a-node-key
 
     Write-Verbose "Query: [$Query]"
-    $Params = . Get-ParameterValues -Properties Raw, ExpandResults, ExpandRow, MetaProperties, MergePrefix
+    $Params = . Get-ParameterValues -Properties As, MetaProperties, MergePrefix, Credential, BaseUri
     Invoke-Neo4jQuery @Params -Query $Query
 }

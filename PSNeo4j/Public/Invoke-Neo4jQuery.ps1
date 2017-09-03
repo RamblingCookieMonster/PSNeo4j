@@ -14,9 +14,8 @@
                    Position = 1)]
         [hashtable]$Parameters,
 
-        [switch]$Raw,
-        [switch]$ExpandResults,
-        [switch]$ExpandRow,
+        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [string]$As = 'Parsed',
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties,
         [string]$MergePrefix = 'Neo4j',
@@ -35,7 +34,6 @@
         else {
             $AllStatements = $Statements
         }
-        $ConvertParams = . Get-ParameterValues -Properties Raw, ExpandResults, ExpandRow, MetaProperties, MergePrefix
     }
     process {
         if($PSCmdlet.ParameterSetName -eq 'Query') {
@@ -61,6 +59,7 @@
         }
         Write-Verbose "$($Params | Format-List | Out-String)"
         $Response = Invoke-RestMethod @Params
+        $ConvertParams = . Get-ParameterValues -Properties MetaProperties, MergePrefix, As
         Write-Verbose "Params is $($ConvertParams | Format-List | Out-String)"
         ConvertFrom-Neo4jResponse @ConvertParams -Response $Response 
     }

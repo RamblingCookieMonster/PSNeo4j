@@ -21,9 +21,8 @@
         [switch]$Passthru,
         [switch]$Compress,
 
-        [switch]$Raw,
-        [switch]$ExpandResults,
-        [switch]$ExpandRow,
+        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [string]$As = 'Parsed',
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties,
         [string]$MergePrefix = 'Neo4j',
@@ -91,7 +90,7 @@ $RightQuery
 MATCH ($LeftVar)-[relationship:$Type $PropString]->($RightVar)
 DELETE relationship
 "@
-    $Params = . Get-ParameterValues -Properties Raw, ExpandRow, ExpandResults, Credential, MetaProperties, MergePrefix
+    $Params = . Get-ParameterValues -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
     Write-Verbose "$($Params | Format-List | Out-String)"
     Invoke-Neo4jQuery @Params @InvokeParams -Query $Query
 }

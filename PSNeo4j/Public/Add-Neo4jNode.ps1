@@ -7,9 +7,8 @@
         [switch]$Passthru,
         [switch]$Compress,
 
-        [switch]$Raw,
-        [switch]$ExpandResults,
-        [switch]$ExpandRow,
+        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [string]$As = 'Parsed',
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties,
         [string]$MergePrefix = 'Neo4j',
@@ -31,7 +30,7 @@
     }
     end {
         $Statements = ConvertTo-Neo4jNodesStatement -InputObject $Objects -Label $Label -Passthru:$Passthru -Compress:$Compress
-        $Params = . Get-ParameterValues -Properties Raw, ExpandResults, ExpandRow, MetaProperties, MergePrefix
+        $Params = . Get-ParameterValues -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
         Write-Verbose "$($Params | Format-List | Out-String)"
         Invoke-Neo4jQuery @Params -Statements $Statements
     }

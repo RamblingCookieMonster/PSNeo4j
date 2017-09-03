@@ -2,14 +2,13 @@
     [cmdletbinding()]
     param(
         $Response,
-        [switch]$Raw,
-        [switch]$ExpandResults,
-        [switch]$ExpandRow,
+        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [string]$As = 'Parsed',
         [string]$MergePrefix = 'Neo4j',
         [validateset('id', 'type', 'deleted')]
         [string[]]$MetaProperties = 'Type'
     )
-    if($Raw) {
+    if($As -eq 'Raw') {
         return $Response
     }
     if($Response.Errors.count -gt 0) {
@@ -21,13 +20,13 @@
         #return
     }
 
-    If($ExpandResults) {
+    If($As -eq 'ExpandResults') {
         return $Response.results
     }
-    If($ExpandRow) {
+    If($As -eq 'ExpandRow') {
         return $Response.results.data.row
     }
-    Else {
+    If($As -eq 'Parsed') {
         # The following merges columns+rows, and rows+meta
 
         # Is results always an array of 1?

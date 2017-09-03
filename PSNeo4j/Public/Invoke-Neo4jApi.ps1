@@ -5,9 +5,8 @@
         [string]$RelativeUri,
         [hashtable]$Body,
         
-        [switch]$Raw,
-        [switch]$ExpandResults,
-        [switch]$ExpandRow,
+        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [string]$As = 'Parsed',
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties,
         [string]$MergePrefix = 'Neo4j',
@@ -29,6 +28,6 @@
     Write-Verbose "$($Params | Format-List | Out-String)"
     $Response = Invoke-RestMethod @Params
     Write-Verbose "Params is $($ConvertParams | Format-List | Out-String)"
-    $ConvertParams = . Get-ParameterValues -Properties Raw, ExpandResults, ExpandRow, MetaProperties, MergePrefix
+    $ConvertParams = . Get-ParameterValues -Properties MetaProperties, MergePrefix, As
     ConvertFrom-Neo4jResponse @ConvertParams -Response $Response 
 }

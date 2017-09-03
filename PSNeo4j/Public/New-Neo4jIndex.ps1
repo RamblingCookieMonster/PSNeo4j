@@ -5,9 +5,8 @@
         [string[]]$Property, # Injection alert
         [switch]$Composite,
 
-        [switch]$Raw,
-        [switch]$ExpandResults,
-        [switch]$ExpandRow,
+        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [string]$As = 'Parsed',
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties,
         [string]$MergePrefix = 'Neo4j',
@@ -31,6 +30,6 @@
     }
     $InvokeParams.add('Query', $Query)
     Write-Verbose "Query: [$Query]"
-    $Params = . Get-ParameterValues -Properties Raw, ExpandResults, ExpandRow, MetaProperties, MergePrefix
+    $Params = . Get-ParameterValues -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
     Invoke-Neo4jQuery @Params @InvokeParams
 }

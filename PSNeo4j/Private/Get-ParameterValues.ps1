@@ -30,16 +30,15 @@ function Get-ParameterValues {
         $BoundParameters = $PSBoundParameters,
         [string[]]$Properties
     )
-
     if($MyInvocation.Line[($MyInvocation.OffsetInLine - 1)] -ne '.') {
         throw "Get-ParameterValues must be dot-sourced, like this: . Get-ParameterValues"
     }
     $ParameterValues = @{}
     foreach($parameter in $Invocation.MyCommand.Parameters.GetEnumerator()) {
         # gm -in $parameter.Value | Out-Default
-        if($Properties -like $Key) {
-            try {
-                $key = $parameter.Key
+        try {
+            $key = $parameter.Key
+            if($Properties -like $Key) {
                 if($null -ne ($value = Get-Variable -Name $key -ValueOnly -ErrorAction Ignore)) {
                     if($value -ne ($null -as $parameter.Value.ParameterType)) {
                         $ParameterValues[$key] = $value
@@ -48,8 +47,8 @@ function Get-ParameterValues {
                 if($BoundParameters.ContainsKey($key)) {
                     $ParameterValues[$key] = $BoundParameters[$key]
                 }
-            } finally {}
-        }
+            }
+        } finally {}
     }
     $ParameterValues
 }

@@ -1,19 +1,102 @@
-﻿
+﻿$path = '~/documents/github/psneo4j/psneo4j'
+Import-Module $Path -Force
 
-$password = ConvertTo-SecureString -String "myneo4jpassword!" -AsPlainText -Force
-$neocred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList neo4j, $password
-$PSNeo4jConfig = @{
-    BaseUri = 'http://127.0.0.1:7474'
-    Credential = $neocred
-}
+# Set this password ahead of time, and maybe use an actual password generator : )
+    $Password = ConvertTo-SecureString -String "myneo4jpassword!" -AsPlainText -Force
+    $Cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList neo4j, $password
+    Set-PSNeo4jConfiguration -Credential $Cred -BaseUri 'http://127.0.0.1:7474'
 
-$Credential = $PSNeo4jConfig.Credential
-$BaseUri = $PSNeo4jConfig.BaseUri
+# Did we connect?
+    Get-Neo4jUser
+
+# Add some example data
+    [pscustomobject]@{
+        ComputerName = 'dc01'
+        Domain = 'some.domain'
+    },
+    [pscustomobject]@{
+        ComputerName = 'dc02'
+        Domain = 'some.domain'
+    },
+    [pscustomobject]@{
+        ComputerName = 'web01'
+        Domain = 'some.domain'
+    } |
+        Add-Neo4jNode -Label Server -Passthru -Verbose
+
+    [pscustomobject]@{
+        Name = 'Active Directory'
+        Engineer = 'Warren Frame'
+    } |
+        Add-Neo4jNode -Label Service -Passthru
+
+# See what we have
+    Invoke-Neo4jQuery -Query @"
+MATCH (n)
+RETURN n;
+"@ | Format-List -Property * -Force
+
+# Add some relationships
+    Add-Neo4jRelationship -LeftLabel Server -LeftHash @{ComputerName = 'web01'} `
+                          -RightLabel Service -RightHash @{Name = 'Active Directory'} `
+                          -Type 'DependsOn' `
+                          -Properties @{
+                              Identity = $True
+                              Management = $True
+                          }
+
+    Add-Neo4jRelationship -LeftQuery "MATCH (left:Server) WHERE left.ComputerName =~ 'dc.*'" `
+                          -RightQuery "MATCH (right:Service { Name: 'Active Directory'})" `
+                          -Type 'DependsOn' `
+                          -Properties @{
+                              ServiceHost = $True
+                              LoadBalanced = $True
+                          }
+
+    # Oops! Wrong direction.  Delete it.
+    Remove-Neo4jRelationship -LeftQuery "MATCH (left:Server) WHERE left.ComputerName =~ 'dc.*'" `
+                             -Type 'DependsOn' `
+                             -Properties @{
+                                 ServiceHost = $True
+                                 LoadBalanced = $True
+                             }
 
 
+    # Add back with the right direction
+    Add-Neo4jRelationship -LeftQuery "MATCH (left:Service { Name: 'Active Directory'})" `
+                          -RightQuery "MATCH (right:Server) WHERE right.ComputerName =~ 'dc.*'" `
+                          -Type 'DependsOn' `
+                          -Properties @{
+                              ServiceHost = $True
+                              LoadBalanced = $True
+                          }
+
+# Add a composite index, and individual indexes
+    New-Neo4jIndex -Label Server -Property computername, domain -Composite
+    New-Neo4jIndex -Label Server -Property computername, domain
+
+# Add some constraints on properties
+    Add-Neo4jConstraint -Label Server -Property computername -Unique
+
+# Look at indexes
+    Invoke-Neo4jQuery -Query "CALL db.indexes();"
+
+# Maybe we only need a constraint.  Drop some indexes, add constraints
+    Remove-Neo4jIndex -Label Server -Property computername, domain -Composite
+    Remove-Neo4jIndex -Label Server -Property computername, domain
+
+# Remove a server
+    @{ComputerName = 'web01'} | Remove-Neo4jNode -Label Server
+    # Error! Can't delete if a relationship... unless we detach
+    @{ComputerName = 'web01'} | Remove-Neo4jNode -Label Server -Detach
+
+# Bah, let's just delete everything
+Invoke-Neo4jQuery -Query @"
+MATCH (n)
+DETACH DELETE n;
+"@
 
 # data root
-
 $uri = Join-Parts -Parts $BaseUri, 'db/data'
 Try
 {
@@ -44,6 +127,22 @@ $Query = $dcs | Select @{l='ComputerName';e={$_.Name}},
                       Domain,
                       OperatingSystem |
                ConvertTo-Neo4jNodes -Label Server -Passthru
+
+[pscustomobject]@{
+    ComputerName = 'dc01'
+    Domain = 'some.domain'
+},
+[pscustomobject]@{
+    ComputerName = 'dc02'
+    Domain = 'some.domain'
+} |
+    Add-Neo4jNode -Label Server -Passthru -Verbose
+
+[pscustomobject]@{
+    Name = 'Active Directory'
+    Engineer = 'Warren Frame'
+} |
+    Add-Neo4jNode -Label Service -Passthru
 
 $uri = Join-Parts -Parts $BaseUri, 'db/data/transaction/commit'
 $Body = @{

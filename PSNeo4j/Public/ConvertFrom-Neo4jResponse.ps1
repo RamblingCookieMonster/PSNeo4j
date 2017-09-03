@@ -1,4 +1,4 @@
-﻿function Parse-Neo4jResponse {
+﻿function ConvertFrom-Neo4jResponse {
     [cmdletbinding()]
     param(
         $Response,
@@ -17,9 +17,12 @@
             Write-Error -ErrorId $err.code -Message $err.message
         }
     }
+    if($Response.psobject.properties.name -contains 'results') {
+        #return
+    }
 
     If($ExpandResults) {
-        return $Response.Results
+        return $Response.results
     }
     If($ExpandRow) {
         return $Response.results.data.row

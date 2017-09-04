@@ -2,7 +2,10 @@
 
 PSNeo4j is a simple Neo4j PowerShell module, allowing you to quickly build up graph data from any of the technologies PowerShell can interface with.
 
-IMPORTANT: This has had minimal manual testing, and the default response conversion currently misses many common cases
+IMPORTANT:
+
+* This has had minimal manual testing, and the default response conversion currently misses many common cases
+* Some commands are susceptible to injection.  See `Get-Help about_PSNeo4j` for more details
 
 ## Getting Started
 
@@ -24,7 +27,7 @@ Install Neo4j, and configure the `neo4j` user's password via `http://127.0.0.1:7
 
 # Get help
     Get-Help Invoke-Neo4jQuery -Full
-    # TODO: Get-Help about_PSNeo4j
+    Get-Help about_PSNeo4j
 ```
 
 ## Examples
@@ -175,5 +178,7 @@ DETACH DELETE n;
 
 * Thanks to @Jaykul for the `Configuration` module that we embed and rely on
 * Thanks to @GlennSarti for his various articles and presentations on Neo4j, and maintaining the neo4j-community Chocolatey package
+* Thanks to the folks behind [BloodHound](https://github.com/BloodHoundAD/BloodHound) for some in-the-wild examples
 * Using the neo4j-community Chocolatey package and want to know what's actually happening?  Read the install script (e.g. [install for 3.2.3](https://github.com/glennsarti/neo4j-community-chocolatey/blob/master/neo4j-community-3.2.3/tools/chocolateyInstall.ps1))
+* We use the [transactional Cypher HTTP endpoint](http://neo4j.com/docs/developer-manual/current/http-api/), doing most work with Cypher queries rather than the REST endpoints or Bolt (currently)
 * Fun blog post pending!

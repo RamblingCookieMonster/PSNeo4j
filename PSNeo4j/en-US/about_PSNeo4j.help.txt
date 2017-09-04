@@ -1,0 +1,83 @@
+TOPIC
+    about_PSNeo4j
+
+SHORT DESCRIPTION
+    PSNeo4j is a module to simplify working with Neo4j data
+
+DETAILED DESCRIPTION
+    PSNeo4j is a module to simplify working with Neo4j data
+
+    Think of this like a simplified (Ruby) Bundler, or (Python) pip requirements files
+
+                      
+    Common Parameters and PSNeo4j Configuration
+    ===========================================
+
+    Many functions end up calling Invoke-Neo4jQuery.
+    These functions and a few others end up passing on some common parameters, including:
+    
+        Credential:     PSCredential to use for auth
+        BaseUri:        BaseUri to build REST endpoint Uris from
+        As:             What to return.  See ConvertFrom-Neo4jResponse for details:
+                            Parsed:  We attempt to parse the output into friendlier PowerShell objects
+                                     Please open an issue if you see unexpected output with this
+                            Raw:     We don't touch the response                           ($Response)
+                            Results: We expand the 'results' property on the response      ($Response.results)
+                            Row:     We expand the 'row' property on the responses results ($Response.results.data.row)
+        MetaProperties: Merge zero or any combination of these corresponding meta properties in the results: 'id', 'type', 'deleted'
+        MergePrefix:    If MetaProperties is specified, we add this prefix to avoid clobbering existing neo4j properties
+
+    Default values when you initialize PSNeo4j:
+
+        Credential     = $null
+        BaseUri        = 'http://127.0.0.1:7474'
+        As             = 'Parsed'
+        MetaProperties = @('Type')
+        MergePrefix    = 'Neo4j'
+
+    You can set these properties with Set-PSNeo4jConfiguration, and view them with Get-PSNeo4jConfiguration
+    We use an embedded copy of Joel Bennett's Configuration module, defaulting to the User scope to allow serialization of credentials
+
+
+    ==============================
+    IMPORTANT: Injection awareness
+    ==============================
+    ==============================
+    ==============================
+
+    Many functions here rely on string concatenation or inerpolation, allowing for SQL injection.
+    
+    Be sure to validate input in general, and in particular, be aware that the following parameters are added to a query string:
+
+    * Label
+    * *Hash
+        Hash keys (values are parameterized)
+    * Relationship (in Constraint commands)
+    * Property (in Constraint and Index commands)
+    * Others I might have missed.  Read the code : )
+
+
+    References
+    ==========
+
+    Handy PowerShell articles and projects using Neo4j:
+
+      * https://github.com/BloodHoundAD/BloodHound
+      * https://glennsarti.github.io/blog/graph-all-the-powershell-things/
+      * https://glennsarti.github.io/blog/using-neo4j-dotnet-client-in-ps/
+      * https://glennsarti.github.io/blog/powershell-neo4j-metrics/
+      * https://glennsarti.github.io/blog/neo4j-choco-blog/
+      * https://github.com/neo4j/neo4j/tree/3.2/packaging/standalone/src/main/distribution/shell-scripts/bin/Neo4j-Management
+
+    Handy Neo4j references (note: cypher refers to Neo4j's query language):
+
+      * http://neo4j.com/docs/cypher-refcard/current/
+      * https://neo4j.com/developer/cypher-query-language/
+      * http://neo4j.com/docs/developer-manual/current/
+      * http://neo4j.com/docs/rest-docs/current/
+      * https://neo4j.com/docs/developer-manual/current/http-api/
+    
+
+SEE ALSO
+    about_PSDepend_Definitions
+    https://github.com/RamblingCookieMonster/PSDepend

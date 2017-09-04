@@ -13,10 +13,10 @@
         [switch]$Exists,
 
         [validateset('Raw', 'Results', 'Row', 'Parsed')]
-        [string]$As = 'Parsed',
+        [string]$As = $PSNeo4jConfig.As,
         [validateset('id', 'type', 'deleted')]
-        [string]$MetaProperties,
-        [string]$MergePrefix = 'Neo4j',
+        [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,
+        [string]$MergePrefix = $PSNeo4jConfig.MergePrefix,
 
         [string]$BaseUri = $PSNeo4jConfig.BaseUri,
 
@@ -27,23 +27,19 @@
     )
     $Query = [System.Collections.ArrayList]@()
     if($PSCmdlet.ParameterSetName -eq 'Node') {
-        write-verbose 'NODE'
         if($Unique) {
             Foreach($Prop in $Property) {
-                write-verbose $prop
                 [void]$Query.add("DROP CONSTRAINT ON (l:$Label) ASSERT l.$Prop IS UNIQUE")
             }            
         }
         If($Exists) {
             Foreach($Prop in $Property) {
                 # Requires enterprise. Interesting
-                write-verbose $prop
                 [void]$Query.add("DROP CONSTRAINT ON (l:$Label) ASSERT exists(l.$Prop)")
             }
         }
     }
     if($PSCmdlet.ParameterSetName -eq 'Relationship') {
-        write-verboe 'relationship'
         Foreach($Prop in $Property) {
             # Requires enterprise. Interesting
             [void]$Query.add("DROP CONSTRAINT ON ()-[l:$Relationship]-() ASSERT exists(l.$Prop)")

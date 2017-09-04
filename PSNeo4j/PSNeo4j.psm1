@@ -22,12 +22,15 @@ Foreach ($Module in (Get-ChildItem $ModuleRoot\Private\Modules -Directory)) {
 
 try {
     $Config = Import-Config -ErrorAction Stop
-    $PSNeo4jConfig = [pscustomobject]$Config | Select BaseUri, Credential
+    $PSNeo4jConfig = [pscustomobject]$Config | Select BaseUri, Credential, As, MetaProperties, MergePrefix
 }
 catch {
     $PSNeo4jConfig = [pscustomobject]@{
         Credential = $null
-        BaseUri = $null
+        BaseUri = 'http://127.0.0.1:7474'
+        As = 'Parsed'
+        MetaProperties = @('Type')
+        MergePrefix = 'Neo4j'
     }
 }
 

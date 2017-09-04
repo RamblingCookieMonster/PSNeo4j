@@ -15,10 +15,10 @@
         [hashtable]$Parameters,
 
         [validateset('Raw', 'Results', 'Row', 'Parsed')]
-        [string]$As = 'Parsed',
+        [string]$As = $PSNeo4jConfig.As,
         [validateset('id', 'type', 'deleted')]
-        [string]$MetaProperties,
-        [string]$MergePrefix = 'Neo4j',
+        [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,
+        [string]$MergePrefix = $PSNeo4jConfig.MergePrefix,
 
         [string]$BaseUri = $PSNeo4jConfig.BaseUri,
 
@@ -54,7 +54,7 @@
             Headers = Get-Neo4jHeader -Credential $Credential
             Method = 'Post'
             Uri = Join-Parts -Parts $BaseUri, 'db/data/transaction/commit'
-            Body = ConvertTo-Json -InputObject $StatementsObject -Depth 10 -Compress:$Compress
+            Body = ConvertTo-Json -InputObject $StatementsObject -Depth 10
             ErrorAction = 'Stop'
         }
         Write-Verbose "$($Params | Format-List | Out-String)"

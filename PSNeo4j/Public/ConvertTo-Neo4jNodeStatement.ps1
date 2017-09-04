@@ -7,8 +7,8 @@ function ConvertTo-Neo4jNodeStatement {
         [switch]$Passthru,
         [switch]$Compress
     )
-    $Query = "CREATE (n:$Label { props } )"
-    if($Passthru) {$Query = "$Query RETURN n"}
+    $Query = "CREATE (node:$Label { props } )"
+    if($Passthru) {$Query = "$Query RETURN node"}
     [pscustomobject]@{
         statement = $Query
         parameters = @{

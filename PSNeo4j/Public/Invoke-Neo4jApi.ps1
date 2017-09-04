@@ -6,10 +6,10 @@
         [hashtable]$Body,
         
         [validateset('Raw', 'Results', 'Row', 'Parsed')]
-        [string]$As = 'Parsed',
+        [string]$As = $PSNeo4jConfig.As,
         [validateset('id', 'type', 'deleted')]
-        [string]$MetaProperties,
-        [string]$MergePrefix = 'Neo4j',
+        [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,
+        [string]$MergePrefix = $PSNeo4jConfig.MergePrefix,
 
         [string]$BaseUri = $PSNeo4jConfig.BaseUri,
 

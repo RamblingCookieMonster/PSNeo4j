@@ -9,8 +9,8 @@ function ConvertTo-Neo4jNodesStatement {
         [switch]$Compress
     )
     begin {
-        $Query = "UNWIND {props} AS properties CREATE (n:$Label) SET n = properties"
-        if($Passthru) {$Query = "$Query RETURN n"}
+        $Query = "UNWIND {props} AS properties CREATE (node:$Label) SET node = properties"
+        if($Passthru) {$Query = "$Query RETURN node"}
         $Props = [System.Collections.ArrayList]@()
     }
     process {

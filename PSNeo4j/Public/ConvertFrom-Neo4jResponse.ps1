@@ -3,10 +3,10 @@
     param(
         $Response,
         [validateset('Raw', 'Results', 'Row', 'Parsed')]
-        [string]$As = 'Parsed',
-        [string]$MergePrefix = 'Neo4j',
+        [string]$As = $PSNeo4jConfig.As,
         [validateset('id', 'type', 'deleted')]
-        [string[]]$MetaProperties = 'Type'
+        [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,
+        [string]$MergePrefix = $PSNeo4jConfig.MergePrefix
     )
     if($As -eq 'Raw') {
         return $Response

@@ -4,7 +4,7 @@
 RootModule = 'PSNeo4j.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0'
+ModuleVersion = '0.0.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -22,7 +22,7 @@ CompanyName = 'Unknown'
 Copyright = '(c) 2017 Warren Frame. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'Simple Neo4j wrapper for Powershell'
+Description = 'PRERELEASE: Simple Neo4j wrapper for Powershell'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '4.0'

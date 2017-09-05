@@ -4,7 +4,8 @@ PSNeo4j is a simple Neo4j PowerShell module, allowing you to quickly build up gr
 
 IMPORTANT:
 
-* Opening this up before it's minimally viable - e.g. minimal to no help content yet- input is welcome
+* Opening this up before it's minimally viable - e.g. minimal to no help content yet - input is welcome
+* Until this note is removed, there will be breaking changes often, without bumping the major version number
 * This has had minimal manual testing, and the default response conversion currently misses many common cases
 * Some commands are susceptible to injection.  See `Get-Help about_PSNeo4j` for more details
 

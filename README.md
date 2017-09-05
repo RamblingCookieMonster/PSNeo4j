@@ -4,6 +4,7 @@ PSNeo4j is a simple Neo4j PowerShell module, allowing you to quickly build up gr
 
 IMPORTANT:
 
+* Opening this up before it's minimally viable - e.g. minimal to no help content yet- input is welcome
 * This has had minimal manual testing, and the default response conversion currently misses many common cases
 * Some commands are susceptible to injection.  See `Get-Help about_PSNeo4j` for more details
 
@@ -16,8 +17,6 @@ Install Neo4j, and configure the `neo4j` user's password via `http://127.0.0.1:7
     # Download the repository
     # Unblock the zip
     # Extract the PSNeo4j folder to a module path (e.g. $env:USERPROFILE\Documents\WindowsPowerShell\Modules\)
-# Or, with PowerShell 5 or later or PowerShellGet:
-    Install-Module PSNeo4j
 
 # Import the module.
     Import-Module PSNeo4j    #Alternatively, Import-Module \\Path\To\PSNeo4j

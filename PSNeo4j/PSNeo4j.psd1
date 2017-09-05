@@ -87,13 +87,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('Sql', 'NoSql', 'Query', 'Graph', 'Neo4j', 'Database', 'Cypher')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/RamblingCookieMonster/PSNeo4j/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/RamblingCookieMonster/PSNeo4j'
 
         # A URL to an icon representing this module.
         # IconUri = ''

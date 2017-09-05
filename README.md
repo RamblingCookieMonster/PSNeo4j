@@ -18,6 +18,8 @@ Install Neo4j, and configure the `neo4j` user's password via `http://127.0.0.1:7
     # Download the repository
     # Unblock the zip
     # Extract the PSNeo4j folder to a module path (e.g. $env:USERPROFILE\Documents\WindowsPowerShell\Modules\)
+# Or, with PowerShell 5 or later or PowerShellGet:
+    Install-Module PSNeo4j
 
 # Import the module.
     Import-Module PSNeo4j    #Alternatively, Import-Module \\Path\To\PSNeo4j

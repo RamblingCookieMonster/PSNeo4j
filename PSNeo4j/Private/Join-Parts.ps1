@@ -58,8 +58,8 @@
     )
 
     ( $Parts |
-        Where { $_ } |
-        Foreach { ( [string]$_ ).trim($Separator) } |
-        Where { $_ }
+        Where-Object { $_ } |
+        Foreach-Object { ( [string]$_ ).trim($Separator) } |
+        Where-Object { $_ }
     ) -join $Separator
 }

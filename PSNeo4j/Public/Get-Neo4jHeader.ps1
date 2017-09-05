@@ -1,6 +1,9 @@
 ﻿function Get-Neo4jHeader {
     [cmdletbinding()]
     param(
+        [ValidateNotNull()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
         $Credential = $PSNeo4jConfig.Credential,
         [string]$ContentType = 'application/json',
         [string]$Accept = 'application/json; charset=UTF-8'

@@ -1,6 +1,9 @@
 ﻿function Set-PSNeo4jConfiguration {
     [cmdletbinding()]
     param(
+        [ValidateNotNull()]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
         $Credential,
         $BaseUri,
         [validateset('Raw', 'Results', 'Row', 'Parsed')]

@@ -1,4 +1,4 @@
-﻿function Add-Neo4jNode {
+﻿function New-Neo4jNode {
     <#
     .SYNOPSIS
        Add Neo4j nodes
@@ -19,12 +19,12 @@
             ComputerName = 'web01'
             Domain = 'some.domain'
         } |
-            Add-Neo4jNode -Label Server -Passthru
+            New-Neo4jNode -Label Server -Passthru
 
         # Create three nodes with the label 'Server', and specified properties from the pipeline, and return the resulting nodes
 
     .EXAMPLE
-        Add-Neo4jNode -Label Service -InputObject @{
+        New-Neo4jNode -Label Service -InputObject @{
             Name = 'Active Directory'
             Engineer = 'Warren Frame'
         }

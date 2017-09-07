@@ -1,4 +1,4 @@
-﻿function Add-Neo4jConstraint {
+﻿function New-Neo4jConstraint {
     <#
     .SYNOPSIS
        Add constraints to Neo4j properties
@@ -7,7 +7,7 @@
        Add constraints to Neo4j properties
 
     .EXAMPLE
-        Add-Neo4jConstraint -Label Server -Property computername -Unique
+        New-Neo4jConstraint -Label Server -Property computername -Unique
 
         # Ensure the 'computername' property on nodes with the 'Server' label are unique
 

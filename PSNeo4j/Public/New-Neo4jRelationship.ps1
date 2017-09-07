@@ -1,4 +1,4 @@
-﻿function Add-Neo4jRelationship {
+﻿function New-Neo4jRelationship {
     <#
     .SYNOPSIS
        Add Neo4j relationships
@@ -12,7 +12,7 @@
        You can't mix and match label/hash and query node selection between the left and right (yet)
 
     .EXAMPLE
-        Add-Neo4jRelationship -LeftLabel Server -LeftHash @{ComputerName = 'web01'} `
+        New-Neo4jRelationship -LeftLabel Server -LeftHash @{ComputerName = 'web01'} `
                       -RightLabel Service -RightHash @{Name = 'Active Directory'} `
                       -Type 'DependsOn' `
                       -Properties @{
@@ -27,7 +27,7 @@
         # Essentially:  Web01 DependsOn Active Directory
 
     .EXAMPLE
-        Add-Neo4jRelationship -LeftQuery "MATCH (left:Service { Name: 'Active Directory'})" `
+        New-Neo4jRelationship -LeftQuery "MATCH (left:Service { Name: 'Active Directory'})" `
                       -RightQuery "MATCH (right:Server) WHERE right.ComputerName =~ 'dc.*'" `
                       -Type 'DependsOn' `
                       -Properties @{

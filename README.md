@@ -64,14 +64,14 @@ Get-Neo4jUser
     ComputerName = 'web01'
     Domain = 'some.domain'
 } |
-    Add-Neo4jNode -Label Server -Passthru
+    New-Neo4jNode -Label Server -Passthru
 
 # Add a service
 [pscustomobject]@{
     Name = 'Active Directory'
     Engineer = 'Warren Frame'
 } |
-    Add-Neo4jNode -Label Service -Passthru
+    New-Neo4jNode -Label Service -Passthru
 ```
 
 ### List everything in the database
@@ -88,7 +88,7 @@ RETURN n;
 
 ```powershell
 # web01 relies on AD for identity and management
-Add-Neo4jRelationship -LeftLabel Server -LeftHash @{ComputerName = 'web01'} `
+New-Neo4jRelationship -LeftLabel Server -LeftHash @{ComputerName = 'web01'} `
                       -RightLabel Service -RightHash @{Name = 'Active Directory'} `
                       -Type 'DependsOn' `
                       -Properties @{
@@ -97,7 +97,7 @@ Add-Neo4jRelationship -LeftLabel Server -LeftHash @{ComputerName = 'web01'} `
                       }
 
 # Active Directory relies on dc01 and dc02
-Add-Neo4jRelationship -LeftQuery "MATCH (left:Server) WHERE left.ComputerName =~ 'dc.*'" `
+New-Neo4jRelationship -LeftQuery "MATCH (left:Server) WHERE left.ComputerName =~ 'dc.*'" `
                       -RightQuery "MATCH (right:Service { Name: 'Active Directory'})" `
                       -Type 'DependsOn' `
                       -Properties @{
@@ -115,7 +115,7 @@ Remove-Neo4jRelationship -LeftQuery "MATCH (left:Server) WHERE left.ComputerName
 
 
 # Add the DC relationships back with the right direction (AD depends on DCs)
-Add-Neo4jRelationship -LeftQuery "MATCH (left:Service { Name: 'Active Directory'})" `
+New-Neo4jRelationship -LeftQuery "MATCH (left:Service { Name: 'Active Directory'})" `
                       -RightQuery "MATCH (right:Server) WHERE right.ComputerName =~ 'dc.*'" `
                       -Type 'DependsOn' `
                       -Properties @{
@@ -154,7 +154,7 @@ Remove-Neo4jIndex -Label Server -Property computername, domain
 
 ```powershell
 # Add some constraints on properties
-Add-Neo4jConstraint -Label Server -Property computername -Unique
+New-Neo4jConstraint -Label Server -Property computername -Unique
 ```
 
 ### Remove a node

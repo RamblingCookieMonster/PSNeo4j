@@ -28,16 +28,24 @@
 
         Use in conjunction with LeftHash, if needed
 
+        Warning: susceptible to query injection
+
     . PARAMETER LeftHash
         Filter nodes the relationship starts from to only nodes containing these keys and values
+
+        Warning: susceptible to query injection (keys only. values are parameterized)
 
     . PARAMETER RightLabel
         Determines label of node(s) the relationships point to
 
         Use in conjunction with RightHash, if needed
 
+        Warning: susceptible to query injection
+
     . PARAMETER RightHash
         Filter nodes the relationship points to to only nodes containing these keys and values
+
+        Warning: susceptible to query injection (keys only. values are parameterized)
 
     . PARAMETER LeftQuery
         Query to determine which node(s) the relationships start from
@@ -54,8 +62,12 @@
     . PARAMETER Type
         The relationship type (similar to a label) for the relationship we remove
 
+        Warning: susceptible to query injection
+
     . PARAMETER Properties
         Filter relationships to delete to relationships with these properties
+
+        Warning: susceptible to query injection (keys only. values are parameterized)
 
     .PARAMETER As
         Parse the Neo4j response as...

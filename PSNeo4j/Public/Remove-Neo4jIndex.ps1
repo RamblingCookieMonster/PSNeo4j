@@ -19,10 +19,14 @@
     .PARAMETER Label
         Label containing the property we want to drop the index from
 
+        Warning: susceptible to query injection
+
     .PARAMETER Property
         One or more properties to drop the index from
 
         The 'Composite' parameter specifies whether to drop an index per property, or a composite index on multiple properties
+
+        Warning: susceptible to query injection
 
     .PARAMETER Composite
         If specified and more than one property is specified, drop a composite index

@@ -14,11 +14,17 @@
     .PARAMETER Label
         Label that contains properties to create constraints on
 
+        Warning: susceptible to query injection
+
     .PARAMETER Relationship
         Relationship that contains properties to create constraints on
 
+        Warning: susceptible to query injection
+
     .PARAMETER Property
         One or more properties to apply constraints on
+
+        Warning: susceptible to query injection
 
     .PARAMETER Unique
         Add a unique constraint on specified properties

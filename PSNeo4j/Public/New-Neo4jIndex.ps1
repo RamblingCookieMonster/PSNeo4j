@@ -19,10 +19,14 @@
     .PARAMETER Label
         Label containing the property we want to index
 
+        Warning: susceptible to query injection
+
     .PARAMETER Property
         One or more properties to create indexes on
 
         The 'Composite' parameter specifies whether to create an index per property, or a composite index on multiple properties
+
+        Warning: susceptible to query injection
 
     .PARAMETER Composite
         If specified and more than one property is specified, create a composite index

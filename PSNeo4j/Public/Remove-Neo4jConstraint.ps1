@@ -14,11 +14,17 @@
     .PARAMETER Label
         Label that contains properties to drop constraints from
 
+        Warning: susceptible to query injection
+
     .PARAMETER Relationship
         Relationship that contains properties to drop constraints from
 
+        Warning: susceptible to query injection
+
     .PARAMETER Property
         One or more properties to drop constraints from
+
+        Warning: susceptible to query injection
 
     .PARAMETER Unique
         Drop a unique constraint on specified properties

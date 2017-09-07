@@ -15,7 +15,7 @@
     .PARAMETER User
         User to query for.  Defaults to 'Neo4j'
 
-        Warning: susceptible to injection
+        Warning: susceptible to URI injection
 
     .PARAMETER BaseUri
         BaseUri to build REST endpoint Uris from

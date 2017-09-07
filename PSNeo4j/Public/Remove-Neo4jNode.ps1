@@ -21,8 +21,12 @@
     .PARAMETER Label
         Remove nodes with this label
 
+        Warning: susceptible to query injection
+
     .PARAMETER Hash
         One or more hashtables containing properties and values corresponding to nodes we will delete
+
+        Warning: susceptible to query injection (keys only. values are parameterized)
 
     .PARAMETER Detach
         If specified, remove any relationships to or from the nodes being deleted

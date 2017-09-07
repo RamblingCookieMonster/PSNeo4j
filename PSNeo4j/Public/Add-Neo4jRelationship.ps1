@@ -46,16 +46,24 @@
 
         Use in conjunction with LeftHash, if needed
 
+        Warning: susceptible to query injection
+
     . PARAMETER LeftHash
         Filter nodes the relationship starts from to only nodes containing these keys and values
+
+        Warning: susceptible to query injection (keys only. values are parameterized)
 
     . PARAMETER RightLabel
         Determines label of node(s) the relationships point to
 
         Use in conjunction with RightHash, if needed
+        
+        Warning: susceptible to query injection
 
     . PARAMETER RightHash
         Filter nodes the relationship points to to only nodes containing these keys and values
+
+        Warning: susceptible to query injection (keys only. values are parameterized)
 
     . PARAMETER LeftQuery
         Query to determine which node(s) the relationships start from
@@ -72,8 +80,12 @@
     . PARAMETER Type
         The relationship type (similar to a label)
 
+        Warning: susceptible to query injection
+
     . PARAMETER Properties
         Relationship properties to include
+
+        Warning: susceptible to query injection (keys only. values are parameterized)
 
     . PARAMETER Statement
         Whether to use MERGE or CREATE when creating the relationship.  Defaults to MERGE

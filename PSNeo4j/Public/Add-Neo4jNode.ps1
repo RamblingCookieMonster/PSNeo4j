@@ -34,6 +34,8 @@
     .PARAMETER Label
         Create node with this label
 
+        Warning: susceptible to query injection
+
     .PARAMETER InputObject
         One or more objects containing properties and values to add to this node.
 

@@ -22,7 +22,7 @@ Foreach ($Module in (Get-ChildItem $ModuleRoot\Private\Modules -Directory)) {
 
 try {
     $Config = Import-Config -ErrorAction Stop
-    $PSNeo4jConfig = [pscustomobject]$Config | Select-Object BaseUri, Credential, As, MetaProperties, MergePrefix
+    $PSNeo4jConfig = [pscustomobject]$Config | Select-Object BaseUri, Credential, Streaming, As, MetaProperties, MergePrefix
 }
 catch {
     $PSNeo4jConfig = [pscustomobject]@{

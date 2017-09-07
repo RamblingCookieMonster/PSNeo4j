@@ -26,7 +26,7 @@ try {
 }
 catch {
     $PSNeo4jConfig = [pscustomobject]@{
-        Credential = $null
+        Credential = [System.Management.Automation.PSCredential]::Empty
         BaseUri = 'http://127.0.0.1:7474'
         As = 'Parsed'
         MetaProperties = @('Type')

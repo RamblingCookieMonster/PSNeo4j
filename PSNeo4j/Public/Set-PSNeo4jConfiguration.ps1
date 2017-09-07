@@ -51,7 +51,7 @@
     .PARAMETER Credential
         PSCredential to use for auth
 
-        No initial default
+        No initial default ([System.Management.Automation.PSCredential]::Empty)
     
     .FUNCTIONALITY
         Neo4j

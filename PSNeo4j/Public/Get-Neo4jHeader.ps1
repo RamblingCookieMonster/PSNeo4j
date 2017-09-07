@@ -23,7 +23,6 @@
     #>
     [cmdletbinding()]
     param(
-        [ValidateNotNull()]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
         $Credential = $PSNeo4jConfig.Credential,
@@ -31,8 +30,12 @@
         [string]$Accept = 'application/json; charset=UTF-8'
     )
     # Thanks to Bloodhound authors, borrowed their code!
-    $Base64UserPass = [System.Convert]::ToBase64String( [System.Text.Encoding]::UTF8.GetBytes( $('{0}:{1}' -f $Credential.UserName, $Credential.GetNetworkCredential().Password ) ) )
-    $Headers = @{ Authorization = "Basic $Base64UserPass" }
+    $Headers = @{}
+    if($Credential -notlike [System.Management.Automation.PSCredential]::Empty)
+    {
+        $Base64UserPass = [System.Convert]::ToBase64String( [System.Text.Encoding]::UTF8.GetBytes( $('{0}:{1}' -f $Credential.UserName, $Credential.GetNetworkCredential().Password ) ) )
+        $Headers.add('Authorization', "Basic $Base64UserPass")
+    }
     if($ContentType) {
         $Headers.Add('Content-Type', $ContentType)
     }

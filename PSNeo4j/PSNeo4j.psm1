@@ -28,6 +28,7 @@ catch {
     $PSNeo4jConfig = [pscustomobject]@{
         Credential = [System.Management.Automation.PSCredential]::Empty
         BaseUri = 'http://127.0.0.1:7474'
+        Streaming = $True
         As = 'Parsed'
         MetaProperties = @('Type')
         MergePrefix = 'Neo4j'

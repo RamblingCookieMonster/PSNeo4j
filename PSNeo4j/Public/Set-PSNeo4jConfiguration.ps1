@@ -21,6 +21,11 @@
 
         Defaults to $True
     
+    .PARAMETER Streaming
+        Transmits responses from HTTP API as JSON streams (better performance, lower memory overhead on the server)
+
+        Defaults to $True
+
     .PARAMETER As
         Parse the Neo4j response as...
             Parsed:  We attempt to parse the output into friendlier PowerShell objects
@@ -63,6 +68,7 @@
         [System.Management.Automation.Credential()]
         $Credential,
         $BaseUri,
+        [bool]$Streaming,
         [validateset('Raw', 'Results', 'Row', 'Parsed')]
         [string]$As,
         [validateset('id', 'type', 'deleted')]
@@ -78,6 +84,7 @@
     {
         'Credential' { $Script:PSNeo4jConfig.Credential = $Credential }
         'BaseUri' { $Script:PSNeo4jConfig.BaseUri = $BaseUri }
+        'Streaming' { $Script:PSNeo4jConfig.Streaming = $Streaming }
         'As' { $Script:PSNeo4jConfig.As = $As }
         'MetaProperties' { $Script:PSNeo4jConfig.MetaProperties = $MetaProperties }
         'MergePrefix' { $Script:PSNeo4jConfig.MergePrefix = $MergePrefix }

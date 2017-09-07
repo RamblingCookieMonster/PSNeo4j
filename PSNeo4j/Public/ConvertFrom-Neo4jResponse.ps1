@@ -1,4 +1,51 @@
 ﻿function ConvertFrom-Neo4jResponse {
+    <#
+    .SYNOPSIS
+       Parse the response from Neo4j
+
+    .DESCRIPTION
+       Parse the response from Neo4j
+
+       Generally only useful and used in PSNeo4j commands
+
+       Details: http://neo4j.com/docs/developer-manual/current/http-api/
+
+    .EXAMPLE
+        $Response = Invoke-RestMethod @SomeNeo4jParams
+        ConvertFrom-Neo4jResponse -Response $Response
+
+    .PARAMETER Response
+        Output from Invoke-RestMethod
+
+    .PARAMETER As
+        Parse the Neo4j response as...
+            Parsed:  We attempt to parse the output into friendlier PowerShell objects
+                     Please open an issue if you see unexpected output with this
+            Raw:     We don't touch the response                           ($Response)
+            Results: We expand the 'results' property on the response      ($Response.results)
+            Row:     We expand the 'row' property on the responses results ($Response.results.data.row)
+
+        -As Parsed does a few things:
+          * Merges specified 'Meta' information about each item returned
+          * Merges 'column' name for each item returned
+
+        We default to the value specified by Set-PSNeo4jConfiguration (Initially, 'Parsed')
+
+        See ConvertFrom-Neo4jResponse for implementation details
+
+    .PARAMETER MetaProperties
+        Merge zero or any combination of these corresponding meta properties in the results: 'id', 'type', 'deleted'
+
+        We default to the value specified by Set-PSNeo4jConfiguration (Initially, 'type')
+
+    .PARAMETER MergePrefix
+        If any MetaProperties are specified, we add this prefix to avoid clobbering existing neo4j properties
+
+        We default to the value specified by Set-PSNeo4jConfiguration (Initially, 'Neo4j')
+
+    .FUNCTIONALITY
+        Neo4j
+    #>
     [cmdletbinding()]
     param(
         $Response,

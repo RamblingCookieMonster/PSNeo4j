@@ -2,19 +2,23 @@
     <#
     .SYNOPSIS
        Invoke Neo4j Cypher queries
+
     .DESCRIPTION
        Invoke Neo4j Cypher queries
 
        Simplifies queries against the transactional Cypher HTTP endpoint.
        Begins and commits a transaction in one request via $BaseUri/db/data/transaction/commit
+
     .EXAMPLE
         Invoke-Neo4jQuery -Query "MATCH (n) RETURN n"
 
         # A simple query
+
     .EXAMPLE
         Invoke-Neo4jQuery -Query "MATCH (n:Server) WHERE n.ComputerName = `$ComputerName RETURN n" -Parameters @{ComputerName = 'dc01'}
        
         # A simple query with parameters
+
     .PARAMETER Statements
         One or more statements (hashtable or objects work) to invoke in a single 'Statements' call
 
@@ -47,22 +51,27 @@
         We default to the value specified by Set-PSNeo4jConfiguration (Initially, 'Parsed')
 
         See ConvertFrom-Neo4jResponse for implementation details
+
     .PARAMETER MetaProperties
         Merge zero or any combination of these corresponding meta properties in the results: 'id', 'type', 'deleted'
 
         We default to the value specified by Set-PSNeo4jConfiguration (Initially, 'type')
+
     .PARAMETER MergePrefix
         If any MetaProperties are specified, we add this prefix to avoid clobbering existing neo4j properties
 
         We default to the value specified by Set-PSNeo4jConfiguration (Initially, 'Neo4j')
+
     .PARAMETER BaseUri
         BaseUri to build REST endpoint Uris from
 
         We default to the value specified by Set-PSNeo4jConfiguration (Initially, 'http://127.0.0.1:7474')
+
     .PARAMETER Credential
         PSCredential to use for auth
 
         We default to the value specified by Set-PSNeo4jConfiguration (Initially, not specified)
+
     .FUNCTIONALITY
         Neo4j
     #>

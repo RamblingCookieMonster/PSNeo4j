@@ -1,4 +1,21 @@
 ﻿function Get-PSNeo4jConfiguration {
+    <#
+    .SYNOPSIS
+       Get PSNeo4j configuration values
+
+    .DESCRIPTION
+       Get PSNeo4j configuration values
+
+    .EXAMPLE
+        Get-PSNeo4jConfiguration
+
+    .PARAMETER Source
+        Get PSNeo4j configuration from the module variable, or config file.  Defaults to variable
+   
+    
+    .FUNCTIONALITY
+        Neo4j
+    #>
     param(
         [validateset('Variable','Config')]
         [string]$Source = "Variable"

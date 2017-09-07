@@ -50,16 +50,19 @@
     [cmdletbinding()]
     param
     (
-    [string]$Separator = "/",
+        [string]$Separator = "/",
+        [switch]$DontTrimSeparator,
 
-    [parameter(ValueFromRemainingArguments=$true)]
-    [string[]]$Parts = $null
-        
+        [parameter(ValueFromRemainingArguments=$true)]
+        [string[]]$Parts = $null
     )
 
-    ( $Parts |
+    $Output = ( $Parts |
         Where-Object { $_ } |
         Foreach-Object { ( [string]$_ ).trim($Separator) } |
         Where-Object { $_ }
     ) -join $Separator
+
+    if($Parts[-1][-1] -eq $Separator -and $DontTrimSeparator) { $Output = "$Output$Separator"}
+    $Output
 }

@@ -1,7 +1,38 @@
 ﻿function Get-Neo4jUser {
-[cmdletbinding()]
+    <#
+    .SYNOPSIS
+       Get details on a Neo4j user
+
+    .DESCRIPTION
+       Get details on a Neo4j user
+
+    .EXAMPLE
+        Get-Neo4jUser -User wframe
+
+    .EXAMPLE
+        Get-Neo4jUser
+
+    .PARAMETER User
+        User to query for.  Defaults to 'Neo4j'
+
+        Warning: susceptible to injection
+
+    .PARAMETER BaseUri
+        BaseUri to build REST endpoint Uris from
+
+        We default to the value specified by Set-PSNeo4jConfiguration (Initially, 'http://127.0.0.1:7474')
+
+    .PARAMETER Credential
+        PSCredential to use for auth
+
+        We default to the value specified by Set-PSNeo4jConfiguration (Initially, not specified)
+
+    .FUNCTIONALITY
+        Neo4j
+    #>
+    [cmdletbinding()]
     param (
-        $User = 'neo4j',
+        [string]$User = 'neo4j',
 
         [string]$BaseUri = $PSNeo4jConfig.BaseUri,
 

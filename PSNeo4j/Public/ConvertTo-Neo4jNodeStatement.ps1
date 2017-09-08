@@ -17,6 +17,10 @@
     .PARAMETER Label
         Label for the nodes to create
 
+        If more than one label is provided, create node with multiple labels
+
+        Warning: susceptible to query injection
+
     .PARAMETER Props
         Create node with these properties/values
 
@@ -28,11 +32,12 @@
     #>
     [cmdletbinding()]
     param(
-        [string]$Label,
+        [string[]]$Label,
         [object]$Props,
         [switch]$Passthru
     )
-    $Query = "CREATE (node:$Label { props } )"
+    $LabelString = $Label -join ':'
+    $Query = "CREATE (node:$LabelString { props } )"
     if($Passthru) {$Query = "$Query RETURN node"}
     [pscustomobject]@{
         statement = $Query

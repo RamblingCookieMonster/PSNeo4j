@@ -34,6 +34,8 @@
     .PARAMETER Label
         Create node with this label
 
+        If more than one label is provided, create node with multiple labels
+
         Warning: susceptible to query injection
 
     .PARAMETER InputObject
@@ -81,7 +83,7 @@
     #>
     [cmdletbinding()]
     param(
-        [string]$Label,
+        [string[]]$Label,
         [parameter(ValueFromPipeline=$True)]
         [object[]]$InputObject,
         [switch]$Passthru,

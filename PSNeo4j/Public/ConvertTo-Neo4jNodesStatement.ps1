@@ -23,6 +23,10 @@ function ConvertTo-Neo4jNodesStatement {
     .PARAMETER Label
         Label for the nodes to create
 
+        If more than one label is provided, create node with multiple labels
+
+        Warning: susceptible to query injection
+
     .PARAMETER InputObject
         Create nodes with these properties/values
 
@@ -34,13 +38,14 @@ function ConvertTo-Neo4jNodesStatement {
     #>
     [cmdletbinding()]
     param(
-        [string]$Label,
+        [string[]]$Label,
         [parameter(ValueFromPipeline=$True)]
         [object[]]$InputObject,
         [switch]$Passthru
     )
     begin {
-        $Query = "UNWIND {props} AS properties CREATE (node:$Label) SET node = properties"
+        $LabelString = $Label -join ':'
+        $Query = "UNWIND {props} AS properties CREATE (node:$LabelString) SET node = properties"
         if($Passthru) {$Query = "$Query RETURN node"}
         $Props = [System.Collections.ArrayList]@()
     }

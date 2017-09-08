@@ -84,6 +84,10 @@
             for ($ColumnIndex = 0; $ColumnIndex -lt $Columns.Count; $ColumnIndex++)
             {
                 $Column = $Columns[$ColumnIndex]
+                # Neo4j likes to return columns with no data - wat?
+                if(-not $Data) {
+                    continue
+                }
                 $Datum = $Data[$DataIndex].row[$ColumnIndex].psobject.Copy()
                 $Meta = $Data[$DataIndex].meta[$ColumnIndex]
                 # Consider just looping properties...

@@ -72,7 +72,7 @@
         [validateset('Raw', 'Results', 'Row', 'Parsed')]
         [string]$As,
         [validateset('id', 'type', 'deleted')]
-        [string]$MetaProperties,
+        [string[]]$MetaProperties,
         [string]$MergePrefix,
 
         [ValidateSet("User", "Machine", "Enterprise")]

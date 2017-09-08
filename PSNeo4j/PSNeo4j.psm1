@@ -21,18 +21,15 @@ Foreach ($Module in (Get-ChildItem $ModuleRoot\Private\Modules -Directory)) {
 }
 
 try {
+    $ConfigSchema = . "$PSScriptRoot\PSNeo4j.ConfigSchema.ps1"
     $Config = Import-Config -ErrorAction Stop
-    $PSNeo4jConfig = [pscustomobject]$Config | Select-Object BaseUri, Credential, Streaming, As, MetaProperties, MergePrefix
+    $PSNeo4jConfig = [pscustomobject]$Config | Select-Object $ConfigSchema.PSObject.Properties.Name
 }
 catch {
-    $PSNeo4jConfig = [pscustomobject]@{
-        Credential = [System.Management.Automation.PSCredential]::Empty
-        BaseUri = 'http://127.0.0.1:7474'
-        Streaming = $True
-        As = 'Parsed'
-        MetaProperties = @('Type')
-        MergePrefix = 'Neo4j'
-    }
+    Write-Error $_
+}
+finally {
+    $PSNeo4jConfig = Initialize-PSNeo4jConfiguration -Passthru -ConfigSchema $ConfigSchema -UpdateConfig $False
 }
 
 Export-ModuleMember -Function $Public.Basename

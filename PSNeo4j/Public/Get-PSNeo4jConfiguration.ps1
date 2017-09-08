@@ -22,7 +22,7 @@
     )
     if($Source -eq 'Config') {
         $Config = Import-Configuration -CompanyName 'NA' -Name 'NA'
-        [pscustomobject]$Config | Select-Object BaseUri, Credential, As, MetaProperties, MergePrefix
+        [pscustomobject]$Config | Select-Object $Script:ConfigSchema.PSObject.Properties.Name
     }
     if($Source -eq 'Variable') {
         $Script:PSNeo4jConfig

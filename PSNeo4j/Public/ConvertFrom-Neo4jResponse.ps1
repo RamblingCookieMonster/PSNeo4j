@@ -86,10 +86,13 @@
                 $Column = $Columns[$ColumnIndex]
                 # Neo4j likes to return columns with no data - wat?
                 if(-not $Data) {
-                    continue
+                    $Datum = $null
+                    $Meta = $null
                 }
-                $Datum = $Data[$DataIndex].row[$ColumnIndex].psobject.Copy()
-                $Meta = $Data[$DataIndex].meta[$ColumnIndex]
+                else {
+                    $Datum = $Data[$DataIndex].row[$ColumnIndex].psobject.Copy()
+                    $Meta = $Data[$DataIndex].meta[$ColumnIndex]
+                }
                 # Consider just looping properties...
                 # Is row always an array of 1?
                 foreach($prop in $MetaProperties) {

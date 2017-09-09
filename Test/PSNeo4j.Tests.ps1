@@ -60,73 +60,130 @@ Describe "Set-PSNeo4jConfiguration $PSVersion" {
         
     }
 }
-
+#>
 Describe "Get-Neo4jActiveConfig $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should call dbms.listConfig()' {
+        Get-Neo4jActiveConfig
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'CALL dbms.listConfig()'
+        }
     }
 }
-
+<#
 Describe "Invoke-Neo4jApi $PSVersion" {
     It 'Should' {
 
     }
 }
+#>
 
 Describe "Get-Neo4jConstraint $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should call db.constraints()' {
+        Get-Neo4jConstraint
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'CALL db.constraints()'
+        }
     }
 }
 
 Describe "Remove-Neo4jConstraint $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Drop unique constraints on multiple properties' {
+        Remove-Neo4jConstraint -Label a -Property b, c -Unique
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -contains 'DROP CONSTRAINT ON (l:a) ASSERT l.b IS UNIQUE'
+            $Query -contains 'DROP CONSTRAINT ON (l:a) ASSERT l.c IS UNIQUE'
+        }
     }
 }
 
 Describe "New-Neo4jConstraint $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Create unique constraints on multiple properties' {
+        New-Neo4jConstraint -Label a -Property b, c -Unique
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -contains 'CREATE CONSTRAINT ON (l:a) ASSERT l.b IS UNIQUE'
+            $Query -contains 'CREATE CONSTRAINT ON (l:a) ASSERT l.c IS UNIQUE'
+        }
     }
 }
 
 Describe "Get-Neo4jFunction $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should call dbms.functions()' {
+        Get-Neo4jFunction
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'CALL dbms.functions()'
+        }
     }
 }
-
+<#
 Describe "Get-Neo4jHeader $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should call db.constraints()' {
+        Get-Neo4jConstraint
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'CALL db.constraints()'
+        }
     }
 }
-
+#>
 Describe "Remove-Neo4jIndex $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Drop individual indexes on multiple properties' {
+        Remove-Neo4jIndex -Label a -Property b, c
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -contains 'DROP INDEX ON :a(b)'
+            $Query -contains 'DROP INDEX ON :a(c)'
+        }
+    }
+    It 'Drop composite indexes on multiple properties' {
+        Remove-Neo4jIndex -Label a -Property b, c -Composite
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'DROP INDEX ON :a(b, c)'
+        }
     }
 }
 
 Describe "Get-Neo4jIndex $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should call db.indexes()' {
+        Get-Neo4jIndex
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'CALL db.indexes()'
+        }
     }
 }
 
 Describe "New-Neo4jIndex $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Create individual indexes on multiple properties' {
+        New-Neo4jIndex -Label a -Property b, c
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -contains 'CREATE INDEX ON :a(b)'
+            $Query -contains 'CREATE INDEX ON :a(c)'
+        }
+    }
+    It 'Create composite indexes on multiple properties' {
+        New-Neo4jIndex -Label a -Property b, c -Composite
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'CREATE INDEX ON :a(b, c)'
+        }
     }
 }
 
 Describe "Get-Neo4jLabel $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should call db.labels()' {
+        Get-Neo4jLabel
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'CALL db.labels()'
+        }
     }
 }
-
+<#
 Describe "New-Neo4jNode $PSVersion" {
     It 'Should' {
 
@@ -150,19 +207,27 @@ Describe "ConvertTo-Neo4jNodeStatement $PSVersion" {
 
     }
 }
-
+#>
 Describe "Get-Neo4jProcedure $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should call dbms.procedures()' {
+        Get-Neo4jProcedure
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'CALL dbms.procedures()'
+        }
     }
 }
 
 Describe "Get-Neo4jPropertyKey $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should call db.propertyKeys()' {
+        Get-Neo4jPropertyKey
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'CALL db.propertyKeys()'
+        }
     }
 }
-
+<#
 Describe "Remove-Neo4jRelationship $PSVersion" {
     It 'Should' {
 
@@ -174,13 +239,17 @@ Describe "New-Neo4jRelationship $PSVersion" {
 
     }
 }
-
+#>
 Describe "Get-Neo4jRelationshipType $PSVersion" {
-    It 'Should' {
-
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should call db.relationshipTypes()' {
+        Get-Neo4jRelationshipType
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'CALL db.relationshipTypes()'
+        }
     }
 }
-
+<#
 Describe "ConvertFrom-Neo4jResponse $PSVersion" {
     It 'Should' {
 

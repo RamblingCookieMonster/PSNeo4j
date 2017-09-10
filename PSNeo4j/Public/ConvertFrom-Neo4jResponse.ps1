@@ -67,10 +67,10 @@
         #return
     }
 
-    If($As -eq 'ExpandResults') {
+    If($As -eq 'Results') {
         return $Response.results
     }
-    If($As -eq 'ExpandRow') {
+    If($As -eq 'Row') {
         return $Response.results.data.row
     }
     If($As -eq 'Parsed') {

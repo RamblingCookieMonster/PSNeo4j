@@ -249,13 +249,25 @@ Describe "Get-Neo4jRelationshipType $PSVersion" {
         }
     }
 }
-<#
-Describe "ConvertFrom-Neo4jResponse $PSVersion" {
-    It 'Should' {
 
+Describe "ConvertFrom-Neo4jResponse $PSVersion" {
+    It 'Should return raw output if specified' {
+        $Response = Import-Clixml "$TestDataPath\Nodes.xml"
+        $Parsed = ConvertFrom-Neo4jResponse -Response $Response -As Raw
+        $Parsed | Should be $Response
+    }
+    It 'Should return results if specified' {
+        $Response = Import-Clixml "$TestDataPath\Nodes.xml"
+        $Parsed = ConvertFrom-Neo4jResponse -Response $Response -As Results
+        $Parsed | Should be $Response.results
+    }
+    It 'Should return row output if specified' {
+        $Response = Import-Clixml "$TestDataPath\Nodes.xml"
+        $Parsed = ConvertFrom-Neo4jResponse -Response $Response -As Row
+        $Parsed | Should be $Response.results.data.row
     }
 }
-
+<#
 Describe "New-Neo4jStatements $PSVersion" {
     It 'Should' {
 

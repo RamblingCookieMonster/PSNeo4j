@@ -251,6 +251,7 @@ Describe "Get-Neo4jRelationshipType $PSVersion" {
 }
 
 Describe "ConvertFrom-Neo4jResponse $PSVersion" {
+    # Import response each time in case we mistakenly modify it in the convertfrom function
     It 'Should return raw output if specified' {
         $Response = Import-Clixml "$TestDataPath\Nodes.xml"
         $Parsed = ConvertFrom-Neo4jResponse -Response $Response -As Raw
@@ -265,6 +266,48 @@ Describe "ConvertFrom-Neo4jResponse $PSVersion" {
         $Response = Import-Clixml "$TestDataPath\Nodes.xml"
         $Parsed = ConvertFrom-Neo4jResponse -Response $Response -As Row
         $Parsed | Should be $Response.results.data.row
+    }
+    It 'Should return parsed output if specified' {
+        $Response = Import-Clixml "$TestDataPath\Nodes.xml"
+        $Parsed = @(ConvertFrom-Neo4jResponse -Response $Response -As Parsed)
+        $Parsed.Count | Should Be 3
+        $Parsed[0].ComputerName | Should Be 'dc01'
+        $Parsed[0].Domain | Should Be 'some.domain'
+        $Parsed[0].Neo4jType | Should Be 'node'
+        $Parsed[0].Neo4jColumn | Should Be 'n'
+        $Parsed[0].PSObject.Properties.Name.Count | Should be 4
+        $Parsed[1].ComputerName | Should Be 'dc02'
+        $Parsed[1].Domain | Should Be 'some.domain'
+        $Parsed[1].Neo4jType | Should Be 'node'
+        $Parsed[1].Neo4jColumn | Should Be 'n'
+        $Parsed[1].PSObject.Properties.Name.Count | Should be 4
+        $Parsed[2].ComputerName | Should Be 'web01'
+        $Parsed[2].Domain | Should Be 'some.domain'
+        $Parsed[2].Neo4jType | Should Be 'node'
+        $Parsed[2].Neo4jColumn | Should Be 'n'
+        $Parsed[2].PSObject.Properties.Name.Count | Should be 4
+    }
+    It 'Should parse cases where columns are returned with no data' {
+        $Response = Import-Clixml "$TestDataPath\Function.ColumnsOnly.xml"
+        $Parsed = @(ConvertFrom-Neo4jResponse -Response $Response -As Parsed)
+        $Parsed.count | Should Be 3
+        $Parsed[0].Neo4jColumn | Should be 'Name'
+        $Parsed[0].Neo4jData | Should BeNullOrEmpty
+        $Parsed[0].PSObject.Properties.Name.Count | Should Be 2
+        $Parsed[1].Neo4jColumn | Should be 'Signature'
+        $Parsed[1].Neo4jData | Should BeNullOrEmpty
+        $Parsed[1].PSObject.Properties.Name.Count | Should Be 2
+        $Parsed[2].Neo4jColumn | Should be 'Description'
+        $Parsed[2].Neo4jData | Should BeNullOrEmpty
+        $Parsed[2].PSObject.Properties.Name.Count | Should Be 2
+    }
+    It 'SHould parse errors' {
+        $Response = Import-Clixml "$TestDataPath\Error.xml"
+        $e = $null
+        $Parsed = ConvertFrom-Neo4jResponse -Response $Response -As Parsed -ErrorVariable e -ErrorAction SilentlyContinue
+        $e.Count | Should Be 1
+        $e[0].FullyQualifiedErrorId | Should BeLike 'Neo.ClientError.Statement.SyntaxError,ConvertFrom-Neo4j*'
+        $e[0].Exception.Message | Should BeLike 'Query cannot conclude with MATCH (must be RETURN or an update clause) (line 1, column 1 (offset: 0))*'
     }
 }
 <#

@@ -7,22 +7,22 @@
        Initializes PSNeo4j configuration values
 
        In cases where we've updated configuration schema, this will bring new values in line with the defaults
-    
+
     .PARAMETER Streaming
         Whether to initialize Streaming back to $True
 
     .PARAMETER As
         Whether to initialize As back to 'Parsed'
-    
+
     .PARAMETER MetaProperties
         Whether to initialize MetaProperties back to 'type'
-    
+
     .PARAMETER MergePrefix
         Whether to initialize MergePrefix back to 'Neo4j'
-    
+
     .PARAMETER BaseUri
         Whether to initialize BaseUri back to 'http://127.0.0.1:7474'
-    
+
     .PARAMETER Credential
         Whether to initialize Credential back to [System.Management.Automation.PSCredential]::Empty
 
@@ -60,6 +60,11 @@
         [bool]$UpdateConfig = $True
     )
 
+    if($UpdateConfig -and $SkipConfig) {
+        Write-Warning "Configuration module not available. Config will not be updated"
+        $UpdateConfig = $False
+    }
+
     if($CheckExisting) {
         foreach($Property in $ConfigSchema.PSObject.Properties.Name) {
             if($Script:PSNeo4jConfig.$Property -isnot $ConfigSchema.$Property.Type) {
@@ -78,9 +83,16 @@
         'MergePrefix'    { $Script:PSNeo4jConfig.MergePrefix = 'Neo4j' }
     }
     if($UpdateConfig) {
-        $Script:PSNeo4jConfig | Export-Configuration -Scope $Scope -CompanyName 'NA' -Name 'NA'
+        if($SkipCred) {
+            $Script:PSNeo4jConfig |
+                Select-Object -Property * -ExcludeProperty Credential |
+                Export-Configuration -Scope $Scope -CompanyName 'NA' -Name 'NA'
+        }
+        else {
+            $Script:PSNeo4jConfig | Export-Configuration -Scope $Scope -CompanyName 'NA' -Name 'NA'
+        }
     }
     if($Passthru) {
-        [pscustomobject]$Script:PSNeo4jConfig | Select $ConfigSchema.PSObject.Properties.Name
+        [pscustomobject]$Script:PSNeo4jConfig | Select-Object $ConfigSchema.PSObject.Properties.Name
     }
 }

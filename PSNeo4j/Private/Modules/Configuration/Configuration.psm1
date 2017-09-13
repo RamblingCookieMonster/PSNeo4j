@@ -130,7 +130,7 @@ function Get-StoragePath {
         Write-Verbose "Storage Path: $PathRoot"
 
         # Note: avoid using Convert-Path because drives aliases like "TestData:" get converted to a C:\ file system location
-        $null = mkdir $PathRoot -Force
+        $null = New-Item -ItemType Directory -Path $PathRoot -Force
         (Resolve-Path $PathRoot).Path
     }
 }

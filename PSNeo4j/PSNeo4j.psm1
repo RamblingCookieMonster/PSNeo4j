@@ -26,7 +26,7 @@ try {
         Force = $True
         ErrorAction = 'Stop'
     }
-    if($IsLinux -or $IsOSX) {
+    if($IsLinux -or $IsOSX -or $IsMacOS) {
         $SkipCred = $True
         $Data = "~/.local/share"
         $EvaluatedPath  = Join-Path $Data WindowsPowerShell

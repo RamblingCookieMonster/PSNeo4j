@@ -1,13 +1,13 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/lk3bj4da52dv472x/branch/master?svg=true)](https://ci.appveyor.com/project/RamblingCookieMonster/psneo4j/branch/master)
+
 # PSNeo4j
 
 PSNeo4j is a simple Neo4j PowerShell module, allowing you to quickly build up graph data from any of the technologies PowerShell can interface with.
 
 IMPORTANT:
 
-* Opening this up before it's minimally viable - e.g. minimal to no help content yet - input is welcome
-* Until this note is removed, there will be breaking changes often, without bumping the major version number
-* This has had minimal manual testing, and the default response conversion currently misses many common cases
-* Some commands are susceptible to injection.  See `Get-Help about_PSNeo4j` for more details
+* This has had minimal testing, and the default response conversion (`-As Parsed`) currently misses some common cases
+* Some commands are susceptible to injection.  See `Get-Help about_PSNeo4j` and parameter help for more details
 
 ## Getting Started
 

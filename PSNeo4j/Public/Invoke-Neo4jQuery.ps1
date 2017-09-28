@@ -134,7 +134,7 @@
         }
         Write-Verbose "$($Params | Format-List | Out-String)"
         $Response = Invoke-RestMethod @Params
-        $ConvertParams = . Get-ParameterValues -Properties MetaProperties, MergePrefix, As -Invocation $MyInvocation
+        $ConvertParams = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, As
         Write-Verbose "Params is $($ConvertParams | Format-List | Out-String)"
         ConvertFrom-Neo4jResponse @ConvertParams -Response $Response
     }

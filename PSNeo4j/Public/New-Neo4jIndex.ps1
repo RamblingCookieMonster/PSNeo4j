@@ -8,12 +8,12 @@
 
     .EXAMPLE
         New-Neo4jIndex -Label Server -Property computername, domain -Composite
-        
+
         # Add a composite index on the 'computername' and 'domain' properties for nodes labeled 'Server'
 
     .EXAMPLE
         New-Neo4jIndex -Label Server -Property computername, domain
-        
+
         # Add individual indexes on the 'computername' and 'domain' properties for nodes labeled 'Server'
 
     .PARAMETER Label
@@ -84,7 +84,7 @@
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential  
+        $Credential =  $PSNeo4jConfig.Credential
     )
 
     $InvokeParams = @{}
@@ -98,6 +98,6 @@
     }
     $InvokeParams.add('Query', $Query)
     Write-Verbose "Query: [$Query]"
-    $Params = . Get-ParameterValues -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
+    $Params = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
     Invoke-Neo4jQuery @Params @InvokeParams
 }

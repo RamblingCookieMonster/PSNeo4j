@@ -76,7 +76,7 @@
         [parameter(ParameterSetName = 'Relationship')]
         [string]$Relationship, # Injection alert
         [string[]]$Property, # Injection alert
-        
+
         [parameter(ParameterSetName = 'Node')]
         [switch]$Unique,
         [parameter(ParameterSetName = 'Node')]
@@ -92,7 +92,7 @@
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential  
+        $Credential =  $PSNeo4jConfig.Credential
     )
     $Query = [System.Collections.ArrayList]@()
     if($PSCmdlet.ParameterSetName -eq 'Node') {
@@ -101,7 +101,7 @@
             Foreach($Prop in $Property) {
                 write-verbose $prop
                 [void]$Query.add("CREATE CONSTRAINT ON (l:$Label) ASSERT l.$Prop IS UNIQUE")
-            }            
+            }
         }
         If($Exists) {
             Foreach($Prop in $Property) {
@@ -121,6 +121,6 @@
     # TOOO: http://neo4j.com/docs/developer-manual/current/cypher/schema/constraints/#constraints-drop-a-node-key
 
     Write-Verbose "Query: [$Query]"
-    $Params = . Get-ParameterValues -Properties As, MetaProperties, MergePrefix, Credential, BaseUri
+    $Params = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties As, MetaProperties, MergePrefix, Credential, BaseUri
     Invoke-Neo4jQuery @Params -Query $Query
 }

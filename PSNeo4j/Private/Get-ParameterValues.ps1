@@ -24,9 +24,7 @@ function Get-ParameterValues {
     #>
     [CmdletBinding()]
     param(
-        # The $MyInvocation for the caller -- DO NOT pass this (dot-source Get-ParameterValues instead)
         $Invocation = $MyInvocation,
-        # The $PSBoundParameters for the caller -- DO NOT pass this (dot-source Get-ParameterValues instead)
         $BoundParameters = $PSBoundParameters,
         [string[]]$Properties
     )
@@ -35,7 +33,6 @@ function Get-ParameterValues {
     }
     $ParameterValues = @{}
     foreach($parameter in $Invocation.MyCommand.Parameters.GetEnumerator()) {
-        # gm -in $parameter.Value | Out-Default
         try {
             $key = $parameter.Key
             if($Properties -like $Key) {

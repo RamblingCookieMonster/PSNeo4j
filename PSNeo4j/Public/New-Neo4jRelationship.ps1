@@ -57,7 +57,7 @@
         Determines label of node(s) the relationships point to
 
         Use in conjunction with RightHash, if needed
-        
+
         Warning: susceptible to query injection
 
     . PARAMETER RightHash
@@ -166,7 +166,7 @@
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential  
+        $Credential =  $PSNeo4jConfig.Credential
     )
     $SQLParams = @{}
 
@@ -207,7 +207,7 @@
         $PropString = $Props -join ', '
         $PropString = "{$PropString}"
     }
-    
+
     if($SQLParams.Keys.count -gt 0) {
         $InvokeParams.add('Parameters', $SQLParams)
     }
@@ -218,7 +218,7 @@ $RightQuery
 $Statement (left)-[relationship:$Type $PropString]->(right)
 $Return
 "@
-    $Params = . Get-ParameterValues -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
+    $Params = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
     Write-Verbose "$($Params | Format-List | Out-String)"
     Invoke-Neo4jQuery @Params @InvokeParams -Query $Query
 }

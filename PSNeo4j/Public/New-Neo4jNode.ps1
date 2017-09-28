@@ -98,7 +98,7 @@
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential  
+        $Credential =  $PSNeo4jConfig.Credential
     )
     begin {
         $Objects = [System.Collections.ArrayList]@()
@@ -110,7 +110,7 @@
     }
     end {
         $Statements = ConvertTo-Neo4jNodesStatement -InputObject $Objects -Label $Label -Passthru:$Passthru
-        $Params = . Get-ParameterValues -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
+        $Params = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
         Write-Verbose "$($Params | Format-List | Out-String)"
         Invoke-Neo4jQuery @Params -Statements $Statements
     }

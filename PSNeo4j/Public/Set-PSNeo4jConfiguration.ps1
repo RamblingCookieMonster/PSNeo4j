@@ -15,12 +15,12 @@
         Which scope to serialize configuration to, when UpdateConfig is $True (default).
 
         Defaults to 'User', allowing us to serialize credentials
-    
+
     .PARAMETER UpdateConfig
         Whether to update the configuration file on top of the live module values
 
         Defaults to $True
-    
+
     .PARAMETER Streaming
         Transmits responses from HTTP API as JSON streams (better performance, lower memory overhead on the server)
 
@@ -37,27 +37,27 @@
         We default to 'Parsed' initially
 
         See ConvertFrom-Neo4jResponse for implementation details
-    
+
     .PARAMETER MetaProperties
         Merge zero or any combination of these corresponding meta properties in the results: 'id', 'type', 'deleted'
 
         We default to 'type' initially
-    
+
     .PARAMETER MergePrefix
         If any MetaProperties are specified, we add this prefix to avoid clobbering existing neo4j properties
 
         We default to 'Neo4j' initially
-    
+
     .PARAMETER BaseUri
         BaseUri to build REST endpoint Uris from
 
         We default to 'http://127.0.0.1:7474' initially
-    
+
     .PARAMETER Credential
         PSCredential to use for auth
 
         No initial default ([System.Management.Automation.PSCredential]::Empty)
-    
+
     .FUNCTIONALITY
         Neo4j
     #>
@@ -79,7 +79,10 @@
         [string]$Scope = "User",
         [bool]$UpdateConfig = $True
     )
-
+    if($UpdateConfig -and $SkipConfig) {
+        Write-Warning "Configuration module not available. Config will not be updated"
+        $UpdateConfig = $False
+    }
     Switch ($PSBoundParameters.Keys)
     {
         'Credential' { $Script:PSNeo4jConfig.Credential = $Credential }
@@ -92,6 +95,13 @@
 
     if($UpdateConfig)
     {
-        $Script:PSNeo4jConfig | Export-Configuration -Scope $Scope -CompanyName 'NA' -Name 'NA'
+        if($SkipCred) {
+            $Script:PSNeo4jConfig |
+                Select-Object -Property * -ExcludeProperty Credential |
+                Export-Configuration -Scope $Scope -CompanyName 'NA' -Name 'NA'
+        }
+        else {
+            $Script:PSNeo4jConfig | Export-Configuration -Scope $Scope -CompanyName 'NA' -Name 'NA'
+        }
     }
 }

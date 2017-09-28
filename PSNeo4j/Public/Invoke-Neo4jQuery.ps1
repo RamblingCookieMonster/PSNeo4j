@@ -16,7 +16,7 @@
 
     .EXAMPLE
         Invoke-Neo4jQuery -Query "MATCH (n:Server) WHERE n.ComputerName = `$ComputerName RETURN n" -Parameters @{ComputerName = 'dc01'}
-       
+
         # A simple query with parameters
 
     .PARAMETER Statements
@@ -100,7 +100,7 @@
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential  
+        $Credential =  $PSNeo4jConfig.Credential
     )
     begin {
         if($PSCmdlet.ParameterSetName -eq 'Query') {
@@ -113,7 +113,7 @@
     process {
         if($PSCmdlet.ParameterSetName -eq 'Query') {
             foreach($QueryString in $Query) {
-                $Statement = [pscustomobject]@{ 
+                $Statement = [pscustomobject]@{
                     statement = $QueryString
                 }
                 if($PSBoundParameters.ContainsKey('Parameters')) {
@@ -134,8 +134,8 @@
         }
         Write-Verbose "$($Params | Format-List | Out-String)"
         $Response = Invoke-RestMethod @Params
-        $ConvertParams = . Get-ParameterValues -Properties MetaProperties, MergePrefix, As
+        $ConvertParams = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, As
         Write-Verbose "Params is $($ConvertParams | Format-List | Out-String)"
-        ConvertFrom-Neo4jResponse @ConvertParams -Response $Response 
+        ConvertFrom-Neo4jResponse @ConvertParams -Response $Response
     }
 }

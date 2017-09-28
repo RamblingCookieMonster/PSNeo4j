@@ -20,9 +20,9 @@
 
     .PARAMETER Method
         Specifies the method used for the web request. Defaults to Get.
-        
+
         The acceptable values for this parameter are:
-    
+
         - Default
         - Delete
         - Get
@@ -36,10 +36,10 @@
 
     .PARAMETER Body
         Specifies the body of the request. The body is the content of the request that follows the headers.
-    
+
         The Body parameter can be used to specify a list of query parameters or specify the content of the response.
-    
-        When the input is a GET request, and the body is an IDictionary (typically, a hash table), the body is added to the URI as query parameters. For other request 
+
+        When the input is a GET request, and the body is an IDictionary (typically, a hash table), the body is added to the URI as query parameters. For other request
         types (such as POST), the body is set as the value of the request body in the standard name=value format.
 
     .PARAMETER As
@@ -82,7 +82,7 @@
         [Microsoft.PowerShell.Commands.WebRequestMethod]$Method = 'Get',
         [string]$RelativeUri,
         [object]$Body,
-        
+
         [validateset('Raw', 'Results', 'Row', 'Parsed')]
         [string]$As = 'Raw',
         [validateset('id', 'type', 'deleted')]
@@ -93,7 +93,7 @@
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential  
+        $Credential =  $PSNeo4jConfig.Credential
     )
     $Params = @{
         Headers = Get-Neo4jHeader -Credential $Credential
@@ -105,6 +105,6 @@
     Write-Verbose "$($Params | Format-List | Out-String)"
     $Response = Invoke-RestMethod @Params
     Write-Verbose "Params is $($ConvertParams | Format-List | Out-String)"
-    $ConvertParams = . Get-ParameterValues -Properties MetaProperties, MergePrefix, As
-    ConvertFrom-Neo4jResponse @ConvertParams -Response $Response 
+    $ConvertParams = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, As
+    ConvertFrom-Neo4jResponse @ConvertParams -Response $Response
 }

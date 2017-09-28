@@ -16,17 +16,46 @@ Foreach($import in @($Public + $Private))
     }
 }
 
-Foreach ($Module in (Get-ChildItem $ModuleRoot\Private\Modules -Directory)) {
-    Import-Module $Module.FullName -Force
+# Deal with non-Windows...
+try {
+    $SkipCred = $False
+    $SkipConfig = $False
+    $ConfigModule = Join-Path $ModuleRoot "Private\Modules\Configuration"
+    $ImportParams = @{
+        Name = $ConfigModule
+        Force = $True
+        ErrorAction = 'Stop'
+    }
+    if($IsLinux -or $IsOSX -or $IsMacOS) {
+        $SkipCred = $True
+        $Data = "~/.local/share"
+        $EvaluatedPath  = Join-Path $Data WindowsPowerShell
+        if(-not (Test-Path $EvaluatedPath)) {
+            New-Item -ItemType Directory -Path $EvaluatedPath -Force
+        }
+        $ImportParams.Add('ArgumentList', @(@{}, "$Data", "$Data", "$Data"))
+    }
+    Import-Module @ImportParams
+}
+catch {
+    $SkipConfig = $True
+    Write-Error $_
+    Write-Warning "Failed to load Configuration module, Set-PSNeo4jConfiguration will not write to a config file"
 }
 
 try {
     $ConfigSchema = . "$PSScriptRoot\PSNeo4j.ConfigSchema.ps1"
-    $Config = Import-Config -ErrorAction Stop
-    $PSNeo4jConfig = [pscustomobject]$Config | Select-Object $ConfigSchema.PSObject.Properties.Name
+    if(-not $SkipConfig) {
+        $Config = Import-Config -ErrorAction Stop
+        $PSNeo4jConfig = [pscustomobject]$Config | Select-Object $ConfigSchema.PSObject.Properties.Name
+    }
 }
 catch {
-    Write-Error $_
+    $PSNeo4jConfig = [pscustomobject]@{}
+    Foreach($Property in $ConfigSchema.PSObject.Properties.Name) {
+        Add-Member -MemberType NoteProperty -InputObject $PSNeo4jConfig -Name $Property -Value $null -Force
+    }
+    Write-Warning $_
 }
 finally {
     $PSNeo4jConfig = Initialize-PSNeo4jConfiguration -Passthru -ConfigSchema $ConfigSchema -UpdateConfig $False

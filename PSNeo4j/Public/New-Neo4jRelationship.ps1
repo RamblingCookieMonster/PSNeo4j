@@ -41,53 +41,69 @@
 
         # IMPORTANT: the 'left' and 'right' variables in the respective LeftQuery and RightQuery are required
 
-    . PARAMETER LeftLabel
+    .PARAMETER LeftLabel
         Determines label of node(s) the relationships start from
 
         Use in conjunction with LeftHash, if needed
 
         Warning: susceptible to query injection
 
-    . PARAMETER LeftHash
+    .PARAMETER LeftHash
         Filter nodes the relationship starts from to only nodes containing these keys and values
 
         Warning: susceptible to query injection (keys only. values are parameterized)
 
-    . PARAMETER RightLabel
+    .PARAMETER LeftWhere
+        When using LeftLabel, filter matching nodes with this.  Use 'left' as the matched item
+
+        Example:
+            WHERE left.something = 'blah'
+
+        Warning: susceptible to query injection
+
+    .PARAMETER RightLabel
         Determines label of node(s) the relationships point to
 
         Use in conjunction with RightHash, if needed
 
         Warning: susceptible to query injection
 
-    . PARAMETER RightHash
+    .PARAMETER RightHash
         Filter nodes the relationship points to to only nodes containing these keys and values
 
         Warning: susceptible to query injection (keys only. values are parameterized)
 
-    . PARAMETER LeftQuery
+    .PARAMETER RightWhere
+        When using RightLabel, filter matching nodes with this.  Use 'right' as the matched item
+
+        Example:
+            WHERE right.something = 'blah'
+
+        Warning: susceptible to query injection
+
+    .PARAMETER LeftQuery
         Query to determine which node(s) the relationships start from
 
         IMPORTANT: This must assign the 'left' variable to the resulting nodes, for example:
                    "MATCH (left:Service)"
 
-    . PARAMETER RightQuery
+    .PARAMETER RightQuery
         Query to determine which node(s) the relationships point to
 
         IMPORTANT: This must assign the 'right' variable to the resulting nodes, for example:
                    "MATCH (right:Service)"
 
-    . PARAMETER Type
+    .PARAMETER Type
         The relationship type (similar to a label)
 
         Warning: susceptible to query injection
 
-    . PARAMETER Properties
+    .PARAMETER Properties
         Relationship properties to include
 
         Warning: susceptible to query injection (keys only. values are parameterized)
 
-    . PARAMETER Statement
+    .PARAMETER Statement
         Whether to use MERGE or CREATE when creating the relationship.  Defaults to MERGE
 
     .PARAMETER Passthru
@@ -132,14 +148,19 @@
     param(
         [parameter( ParameterSetName = 'LabelHash',
                     Mandatory = $True )]
-        $LeftLabel,
+        [string]$LeftLabel,
         [parameter( ParameterSetName = 'LabelHash' )]
         $LeftHash,
+        [parameter( ParameterSetName = 'LabelHash')]
+        $LeftWhere,
+
         [parameter( ParameterSetName = 'LabelHash',
                     Mandatory = $True )]
-        $RightLabel,
+        [string]$RightLabel,
         [parameter( ParameterSetName = 'LabelHash')]
         $RightHash,
+        [parameter( ParameterSetName = 'LabelHash')]
+        $RightWhere,
 
         [parameter( ParameterSetName = 'Query',
                     Mandatory = $True )]
@@ -181,6 +202,9 @@
             $LeftPropString = "{$LeftPropString}"
         }
         $LeftQuery = "MATCH (left:$LeftLabel $LeftPropString)"
+        if($LeftWhere) {
+            $LeftQuery = "$LeftQuery`n$LeftWhere"
+        }
 
         $RightPropString = $null
         if($RightHash.keys.count -gt 0) {
@@ -192,6 +216,9 @@
             $RightPropString = "{$RightPropString}"
         }
         $RightQuery = "MATCH (right:$RightLabel $RightPropString)"
+        if($RightWhere) {
+            $RightQuery = "$RightQuery`n$RightWhere"
+        }
     }
 
     if($Passthru) {

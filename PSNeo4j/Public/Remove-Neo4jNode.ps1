@@ -28,6 +28,14 @@
 
         Warning: susceptible to query injection (keys only. values are parameterized)
 
+    .PARAMETER Where
+        Filter matching nodes with this.  Use 'delete' as the matched item
+
+        Example:
+            WHERE delete.something = 'blah'
+
+        Warning: susceptible to query injection
+
     .PARAMETER Detach
         If specified, remove any relationships to or from the nodes being deleted
 
@@ -71,6 +79,7 @@
         [string]$Label,
         [parameter(ValueFromPipeline=$True)]
         [hashtable[]]$Hash,
+        [string]$Where,
         [switch]$Detach,
 
         [validateset('Raw', 'Results', 'Row', 'Parsed')]
@@ -107,6 +116,9 @@
                 $PropString = "{$PropString}"
             }
             $Query = "MATCH (delete:$Label $PropString)"
+            if($Where){
+                $Query = "$Query`n$Where"
+            }
             $Count++
 
             [void]$Queries.Add("$Query $DetachString DELETE delete")

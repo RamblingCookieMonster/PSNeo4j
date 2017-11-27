@@ -183,12 +183,50 @@ Describe "Get-Neo4jLabel $PSVersion" {
         }
     }
 }
-<#
-Describe "New-Neo4jNode $PSVersion" {
-    It 'Should' {
 
+Describe "New-Neo4jNode $PSVersion" {
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should create a new node' {
+        New-Neo4jNode -Label Service -InputObject @{
+            Name = 'Active Directory'
+            Engineer = 'Warren Frame'
+        }
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'UNWIND {props} AS properties CREATE (node:Service) SET node = properties RETURN node'
+            $Parameters.keys -contains 'Name'
+            $Parameters.keys -contains 'Engineer'
+            $Parameters['Name'] -eq 'Active Directory'
+            $Parameters['Engineer'] -eq 'Warren Frame'
+        }
     }
 }
+
+Describe "Set-Neo4jNode $PSVersion" {
+    Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
+    It 'Should create a well formed MERGE query by default' {
+        Set-Neo4jNode -Label Server -Hash @{ Name = 'Server01'} -InputObject @{ Description = 'Some description!' }
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'MERGE (set:Server {Name: $merge0Name}) ON CREATE SET set = {Name: $merge0Name, Description: $extra0Description} ON MATCH SET set += {Description: $extra0Description}'
+            $Parameters.keys -contains 'merge0Name'
+            $Parameters.keys -contains 'extra0Description'
+            $Parameters['merge0Name'] -eq 'Server01'
+            $Parameters['extra0Description'] -eq 'Some description!'
+        }
+    }
+    It 'Should create a well formed MATCH query if NoCreate is specified' {
+        Set-Neo4jNode -Label Server -Hash @{ Name = 'Server01'} -InputObject @{ Description = 'Some description!' } -NoCreate
+        Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
+            $Query -eq 'MATCH (set:Server {Name: $merge0Name}) SET set += {Description: $extra0Description}'
+            $Parameters.keys -contains 'merge0Name'
+            $Parameters.keys -contains 'extra0Description'
+            $Parameters['merge0Name'] -eq 'Server01'
+            $Parameters['extra0Description'] -eq 'Some description!'
+        }
+    }
+}
+
+
+<#
 
 Describe "Remove-Neo4jNode $PSVersion" {
     It 'Should' {

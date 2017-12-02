@@ -84,13 +84,16 @@
             for ($ColumnIndex = 0; $ColumnIndex -lt $Columns.Count; $ColumnIndex++)
             {
                 $Column = $Columns[$ColumnIndex]
+                $Datum = $null
+
                 # Neo4j likes to return columns with no data - wat?
                 if(-not $Data) {
-                    $Datum = $null
                     $Meta = $null
                 }
                 else {
-                    $Datum = $Data[$DataIndex].row[$ColumnIndex].psobject.Copy()
+                    if($null -ne $Data[$DataIndex].row[$ColumnIndex]) {
+                        $Datum = $Data[$DataIndex].row[$ColumnIndex].psobject.Copy()
+                    }
                     $Meta = $Data[$DataIndex].meta[$ColumnIndex]
                 }
                 # Consider just looping properties...

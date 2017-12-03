@@ -83,7 +83,7 @@
         [string]$RelativeUri,
         [object]$Body,
 
-        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [validateset('Raw', 'Results', 'Row', 'Parsed', 'ParsedColumns')]
         [string]$As = 'Raw',
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,

@@ -69,7 +69,7 @@
         $Credential,
         $BaseUri,
         [bool]$Streaming,
-        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [validateset('Raw', 'Results', 'Row', 'Parsed', 'ParsedColumns')]
         [string]$As,
         [validateset('id', 'type', 'deleted')]
         [string[]]$MetaProperties,

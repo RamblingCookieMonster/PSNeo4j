@@ -97,7 +97,7 @@
         [switch]$NoCreate,
         [switch]$Passthru,
 
-        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [validateset('Raw', 'Results', 'Row', 'Parsed', 'ParsedColumns')]
         [string]$As = $PSNeo4jConfig.As,
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,

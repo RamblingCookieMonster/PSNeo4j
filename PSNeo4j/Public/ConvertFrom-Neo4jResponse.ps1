@@ -49,7 +49,7 @@
     [cmdletbinding()]
     param(
         $Response,
-        [validateset('Raw', 'Results', 'Row', 'Parsed')]
+        [validateset('Raw', 'Results', 'Row', 'Parsed', 'ParsedColumns')]
         [string]$As = $PSNeo4jConfig.As,
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,
@@ -116,6 +116,52 @@
                 }
                 $Datum
             }
+        }
+    }
+    If($As -eq 'ParsedColumns') {
+        # The following merges columns+rows, and rows+meta
+
+        # Is results always an array of 1?
+        $Columns = $Response.results.columns
+        $Data = @($Response.results.data)
+        for ($DataIndex = 0; $DataIndex -lt $Data.count; $DataIndex++)
+        { 
+            $Output = [pscustomobject]@{}
+            for ($ColumnIndex = 0; $ColumnIndex -lt $Columns.Count; $ColumnIndex++)
+            {
+                $Column = $Columns[$ColumnIndex]
+                $Datum = $null
+
+                # Neo4j likes to return columns with no data - wat?
+                if(-not $Data) {
+                    $Meta = $null
+                }
+                else {
+                    if($null -ne $Data[$DataIndex].row[$ColumnIndex]) {
+                        $Datum = $Data[$DataIndex].row[$ColumnIndex].psobject.Copy()
+                    }
+                    $Meta = $Data[$DataIndex].meta[$ColumnIndex]
+                }
+                # Consider just looping properties...
+                # Is row always an array of 1?
+                foreach($prop in $MetaProperties) {
+                    if($null -ne $Meta -and $Meta[0].psobject.properties.name -contains $prop) {
+                        Write-Verbose "Adding $MergePrefix$Prop Value $($Meta.$Prop)"
+                        Add-Member -InputObject $Output -Name "$MergePrefix$Prop" -Value $Meta.$Prop -MemberType NoteProperty -Force
+                    }
+                }
+                if($null -ne $Meta) {
+                    Write-Verbose "Adding $MergePrefix`Column Value $($Column)"
+                    Add-Member -InputObject $Datum -Name "$MergePrefix`Column" -Value $Column -MemberType NoteProperty -Force
+                }
+                else
+                {
+                    Write-Verbose "Adding $Column Value $Datum"
+                    if($Datum -is [Object[]] -and $Datum.count -eq 1) {$Datum = $Datum[0]}
+                    Add-Member -InputObject $Output -Name $Column -Value $Datum -MemberType NoteProperty -Force
+                }
+            }
+            $Output
         }
     }
 }

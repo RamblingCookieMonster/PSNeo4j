@@ -46,8 +46,8 @@
     #>
     [cmdletbinding()]
     param(
-        [validateset('Raw', 'Results', 'Row', 'Parsed')]
-        [string]$As = $PSNeo4jConfig.As,
+        [validateset('Raw', 'Results', 'Row', 'Parsed', 'ParsedColumns')]
+        [string]$As = 'ParsedColumns',
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,
         [string]$MergePrefix = $PSNeo4jConfig.MergePrefix,

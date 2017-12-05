@@ -106,6 +106,11 @@
     .PARAMETER Statement
         Whether to use MERGE or CREATE when creating the relationship.  Defaults to MERGE
 
+    .PARAMETER Parameters
+        Other query parameters to add.  You can use these in a query as {key} or $key
+
+        Note: these can clash with Properties, which start 'relationship'
+
     .PARAMETER Passthru
         If specified, we return the resulting relationships
 
@@ -168,6 +173,8 @@
         [parameter( ParameterSetName = 'Query',
                     Mandatory = $True )]
         $RightQuery,
+        [parameter( ParameterSetName = 'Query')]
+        [hashtable]$Parameters,
 
         $Type,
         [hashtable]$Properties,
@@ -224,6 +231,7 @@
     if($Passthru) {
         $Return = 'RETURN relationship'
     }
+
     $InvokeParams = @{}
     $PropString = $null
     if($Properties) {
@@ -234,7 +242,11 @@
         $PropString = $Props -join ', '
         $PropString = "{$PropString}"
     }
-
+    if($PSBoundParameters.ContainsKey('Parameters')) {
+        foreach($Property in $Parameters.keys) {
+            $SQLParams.Add("$Property", $Parameters[$Property])
+        }
+    }
     if($SQLParams.Keys.count -gt 0) {
         $InvokeParams.add('Parameters', $SQLParams)
     }

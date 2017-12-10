@@ -75,6 +75,11 @@
         IMPORTANT: This must assign the 'right' variable to the resulting nodes, for example:
                    "MATCH (right:Service)"
 
+    .PARAMETER Parameters
+        Other query parameters to add.  You can use these in a query as {key} or $key
+
+        Note: these can clash with Properties, which start 'relationship'
+
     .PARAMETER Type
         The relationship type (similar to a label) for the relationship we remove
 
@@ -139,6 +144,8 @@
         $LeftQuery,
         [parameter( ParameterSetName = 'Query' )]
         $RightQuery,
+        [parameter( ParameterSetName = 'Query')]
+        [hashtable]$Parameters,
 
         $Type,
         [hashtable]$Properties,
@@ -203,6 +210,11 @@
         }
         $PropString = $Props -join ', '
         $PropString = "{$PropString}"
+    }
+    if($PSBoundParameters.ContainsKey('Parameters')) {
+        foreach($Property in $Parameters.keys) {
+            $SQLParams.Add("$Property", $Parameters[$Property])
+        }
     }
 
     if($SQLParams.Keys.count -gt 0) {

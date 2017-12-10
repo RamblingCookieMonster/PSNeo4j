@@ -119,7 +119,6 @@
         else {
             [string[]]$PropsToUpdate = $InputObject.psobject.Properties.Name
         }
-        write-verbose "InputObject is $($InputObject.GetType()), PropsToUpdate is $($PropsToUpdate)"
         $Count = 0
     }
     process {
@@ -138,7 +137,6 @@
             $SetPropString = $null
             if($PropsToUpdate.count -gt 0) {
                 [string[]]$ExtraProps = foreach($Property in $PropsToUpdate) {
-                    Write-Verbose "Setting $Property with value $($InputObject.$Property)"
                     "$Property`: `$extra$Count$Property"
                     $SQLParams.Add("extra$Count$Property", $InputObject.$Property)
                 }

@@ -64,7 +64,7 @@
     .PARAMETER Credential
         PSCredential to use for auth
 
-        We default to the value specified by Set-PSNeo4jConfiguration (Initially, not specified)
+        We default to the value specified by Set-PSNeo4jConfiguration (Initially, neo4j:neo4j)
 
     .FUNCTIONALITY
         Neo4j

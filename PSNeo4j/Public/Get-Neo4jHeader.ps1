@@ -11,6 +11,8 @@
 
     .PARAMETER Credential
         Credential to use in the header.  Note that the output is insecure (base64 based)
+        
+        We default to the value specified by Set-PSNeo4jConfiguration (Initially, neo4j:neo4j)
 
     .PARAMETER ContentType
         Content-Type for the header.  Defaults to 'application/json'
@@ -20,6 +22,8 @@
 
     .PARAMETER Streaming
         Transmits responses from HTTP API as JSON streams (better performance, lower memory overhead on the server)
+
+        We default to the value specified by Set-PSNeo4jConfiguration ($true)
 
     .FUNCTIONALITY
         Neo4j

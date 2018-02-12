@@ -28,11 +28,13 @@
 
     .PARAMETER As
         Parse the Neo4j response as...
-            Parsed:  We attempt to parse the output into friendlier PowerShell objects
-                     Please open an issue if you see unexpected output with this
-            Raw:     We don't touch the response                           ($Response)
-            Results: We expand the 'results' property on the response      ($Response.results)
-            Row:     We expand the 'row' property on the responses results ($Response.results.data.row)
+            Parsed:        We attempt to parse the output into friendlier PowerShell objects...
+                           for cases where Response.results includes data with rows of objects
+            ParsedColumns: We attempt to parse the output into friendlier PowerShell objects...
+                           for cases where Response.Results includes Columns and Data independently
+            Raw:           We don't touch the response                           ($Response)
+            Results:       We expand the 'results' property on the response      ($Response.results)
+            Row:           We expand the 'row' property on the responses results ($Response.results.data.row)
 
         We default to 'Parsed' initially
 
@@ -56,7 +58,7 @@
     .PARAMETER Credential
         PSCredential to use for auth
 
-        No initial default ([System.Management.Automation.PSCredential]::Empty)
+        We default to the value specified by Set-PSNeo4jConfiguration (Initially, neo4j:neo4j)
 
     .FUNCTIONALITY
         Neo4j

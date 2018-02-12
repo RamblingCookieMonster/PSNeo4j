@@ -143,7 +143,7 @@ New-Neo4jIndex -Label Server -Property computername, domain -Composite
 New-Neo4jIndex -Label Server -Property computername, domain
 
 # Look at the indexes we created
-Invoke-Neo4jQuery -Query "CALL db.indexes();"
+Get-Neo4jIndex
 
 # Maybe we only need a constraint.  Drop some indexes, add a constraint
 Remove-Neo4jIndex -Label Server -Property computername, domain -Composite
@@ -169,11 +169,16 @@ New-Neo4jConstraint -Label Server -Property computername -Unique
 ### Delete everything!
 
 ```powershell
-# Bah, let's just delete everything
+# This removes nodes, relationships, constraints, and indexes
+Clear-Neo4j
+
+# Alternatively, just clear nodes and relationships:
 Invoke-Neo4jQuery -Query @"
 MATCH (n)
 DETACH DELETE n;
 "@
+
+
 ```
 
 ## Notes

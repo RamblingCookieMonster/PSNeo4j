@@ -5,7 +5,7 @@
     }
     Credential = @{
         Type = [System.Management.Automation.PSCredential]
-        Default = [System.Management.Automation.PSCredential]::Empty
+        Default = New-Object System.Management.Automation.PSCredential('neo4j',$(ConvertTo-SecureString 'neo4j' -asPlainText -Force))
     }
     Streaming = @{
         Type = [System.Boolean]

@@ -8,6 +8,8 @@
 
        In cases where we've updated configuration schema, this will bring new values in line with the defaults
 
+       Default types and values are stored in PSNeo4j.ConfigSchema.ps1 in the module root
+
     .PARAMETER Streaming
         Whether to initialize Streaming back to $True
 
@@ -24,7 +26,7 @@
         Whether to initialize BaseUri back to 'http://127.0.0.1:7474'
 
     .PARAMETER Credential
-        Whether to initialize Credential back to [System.Management.Automation.PSCredential]::Empty
+        Whether to initialize Credential back to username: neo4j password: neo4j
 
     .PARAMETER CheckExisting
         If specified, check existing configuration types and reset anything that doesn't make sense
@@ -65,23 +67,20 @@
         $UpdateConfig = $False
     }
 
+    $ConfigKeys = $ConfigSchema.PSObject.Properties.Name
     if($CheckExisting) {
-        foreach($Property in $ConfigSchema.PSObject.Properties.Name) {
+        foreach($Property in $ConfigKeys) {
             if($Script:PSNeo4jConfig.$Property -isnot $ConfigSchema.$Property.Type) {
                 $Script:PSNeo4jConfig.$Property = $ConfigSchema.$Property.Default
             }
         }
     }
-
-    Switch ($PSBoundParameters.Keys)
-    {
-        'Credential'     { $Script:PSNeo4jConfig.Credential = [System.Management.Automation.PSCredential]::Empty }
-        'BaseUri'        { $Script:PSNeo4jConfig.BaseUri = 'http://127.0.0.1:7474' }
-        'Streaming'      { $Script:PSNeo4jConfig.Streaming = $True }
-        'As'             { $Script:PSNeo4jConfig.As = 'Parsed' }
-        'MetaProperties' { $Script:PSNeo4jConfig.MetaProperties = @('Type') }
-        'MergePrefix'    { $Script:PSNeo4jConfig.MergePrefix = 'Neo4j' }
+    foreach($Key in $PSBoundParameters.Keys) {
+        if($ConfigKeys -contains $Key) {
+            $Script:PSNeo4jConfig.$Key = $ConfigSchema.$Key.Default
+        }
     }
+
     if($UpdateConfig) {
         if($SkipCred) {
             $Script:PSNeo4jConfig |

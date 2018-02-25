@@ -62,14 +62,14 @@
     $Constraints = @( Get-Neo4jConstraint )
     foreach($Constraint in $Constraints) {
         $Prop = @($Constraint.psobject.properties.name)
-        if($Prop.count -eq 1 -and $Prop-like 'd' -and $Prop.d) {
+        if($Prop.count -eq 1 -and $Prop -like 'd' -and $Constraint.d) {
             [void]$SchemaQuery.add("DROP $($Constraint.$Prop)")
         }
     }
     $Indices = @( Get-Neo4jIndex )
     foreach($Index in $Indices) {
         $Prop = @($Index.psobject.properties.name)
-        if($Prop -contains 'description') {
+        if($Prop -contains 'description' -and $Index.type) {
             [void]$SchemaQuery.add("DROP $($Index.description)")
         }
     }
@@ -77,5 +77,7 @@
     Write-Verbose "SchemaQuery: [$SchemaQuery]"
     $Params = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
     Invoke-Neo4jQuery @Params -Query 'MATCH (n) DETACH DELETE n'
-    Invoke-Neo4jQuery @Params -Query $SchemaQuery
+    if($SchemaQuery.count -gt 0) {
+        Invoke-Neo4jQuery @Params -Query $SchemaQuery
+    }
 }

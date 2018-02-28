@@ -58,26 +58,31 @@
         [System.Management.Automation.Credential()]
         $Credential =  $PSNeo4jConfig.Credential
     )
-    $SchemaQuery = [System.Collections.ArrayList]@()
+    $Params = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
+
     $Constraints = @( Get-Neo4jConstraint )
+    $SchemaQuery = [System.Collections.ArrayList]@()
     foreach($Constraint in $Constraints) {
         $Prop = @($Constraint.psobject.properties.name)
         if($Prop.count -eq 1 -and $Prop -like 'd' -and $Constraint.d) {
             [void]$SchemaQuery.add("DROP $($Constraint.$Prop)")
         }
     }
+    if($SchemaQuery.count -gt 0) {
+        Invoke-Neo4jQuery @Params -Query $SchemaQuery
+    }
+
     $Indices = @( Get-Neo4jIndex )
+    $SchemaQuery = [System.Collections.ArrayList]@()
     foreach($Index in $Indices) {
         $Prop = @($Index.psobject.properties.name)
         if($Prop -contains 'description' -and $Index.type) {
             [void]$SchemaQuery.add("DROP $($Index.description)")
         }
     }
-
-    Write-Verbose "SchemaQuery: [$SchemaQuery]"
-    $Params = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, Credential, BaseUri, As
-    Invoke-Neo4jQuery @Params -Query 'MATCH (n) DETACH DELETE n'
     if($SchemaQuery.count -gt 0) {
         Invoke-Neo4jQuery @Params -Query $SchemaQuery
     }
+
+    Invoke-Neo4jQuery @Params -Query 'MATCH (n) DETACH DELETE n'
 }

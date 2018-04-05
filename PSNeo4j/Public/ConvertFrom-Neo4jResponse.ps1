@@ -58,6 +58,16 @@
     if($As -eq 'Raw') {
         return $Response
     }
+    if($Response -is [system.string] -and $Response.length -gt 3) {
+        try {
+            $Response = ConvertFrom-Json $Response -AsHashtable -ErrorAction Stop
+            $Response = [pscustomobject]$Response
+        }
+        catch {
+            Write-Error "Failed to parse Neo4j response:`n$($Response | Out-String)"
+            throw $_
+        }
+    }
     if($Response.Errors.count -gt 0) {
         foreach($err in $Response.Errors) {
             Write-Error -ErrorId $err.code -Message $err.message
@@ -80,7 +90,7 @@
         $Columns = $Response.results.columns
         $Data = @($Response.results.data)
         for ($DataIndex = 0; $DataIndex -lt $Data.count; $DataIndex++)
-        { 
+        {
             for ($ColumnIndex = 0; $ColumnIndex -lt $Columns.Count; $ColumnIndex++)
             {
                 $Column = $Columns[$ColumnIndex]
@@ -93,6 +103,9 @@
                 else {
                     if($null -ne $Data[$DataIndex].row[$ColumnIndex]) {
                         $Datum = $Data[$DataIndex].row[$ColumnIndex].psobject.Copy()
+                        if($Datum -is [hashtable]) {
+                            $Datum = [pscustomobject]$Datum
+                        }
                     }
                     $Meta = $Data[$DataIndex].meta[$ColumnIndex]
                 }
@@ -125,7 +138,7 @@
         $Columns = $Response.results.columns
         $Data = @($Response.results.data)
         for ($DataIndex = 0; $DataIndex -lt $Data.count; $DataIndex++)
-        { 
+        {
             $Output = [pscustomobject]@{}
             for ($ColumnIndex = 0; $ColumnIndex -lt $Columns.Count; $ColumnIndex++)
             {
@@ -139,6 +152,9 @@
                 else {
                     if($null -ne $Data[$DataIndex].row[$ColumnIndex]) {
                         $Datum = $Data[$DataIndex].row[$ColumnIndex].psobject.Copy()
+                        if($Datum -is [hashtable]) {
+                            $Datum = [pscustomobject]$Datum
+                        }
                     }
                     $Meta = $Data[$DataIndex].meta[$ColumnIndex]
                 }

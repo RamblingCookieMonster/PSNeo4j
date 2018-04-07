@@ -103,6 +103,7 @@
         ErrorAction = 'Stop'
     }
     Write-Verbose "$($Params | Format-List | Out-String)"
+    $Response = $null
     $Response = Invoke-RestMethod @Params
     Write-Verbose "Params is $($ConvertParams | Format-List | Out-String)"
     $ConvertParams = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, As

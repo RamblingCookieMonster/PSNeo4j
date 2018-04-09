@@ -10,6 +10,9 @@
 
        Default types and values are stored in PSNeo4j.ConfigSchema.ps1 in the module root
 
+    .PARAMETER All
+        Initialize all values to their defaults as set in PSNeo4j.ConfigSchema.ps1
+
     .PARAMETER Streaming
         Whether to initialize Streaming back to $True
 
@@ -49,6 +52,7 @@
     #>
     [cmdletbinding()]
     param(
+        [switch]$All,
         [switch]$Credential,
         [switch]$BaseUri,
         [switch]$Streaming,
@@ -75,12 +79,18 @@
             }
         }
     }
-    foreach($Key in $PSBoundParameters.Keys) {
-        if($ConfigKeys -contains $Key) {
+    if($All) {
+        foreach($Key in $ConfigKeys) {
             $Script:PSNeo4jConfig.$Key = $ConfigSchema.$Key.Default
         }
     }
-
+    else {
+        foreach($Key in $PSBoundParameters.Keys) {
+            if($ConfigKeys -contains $Key) {
+                $Script:PSNeo4jConfig.$Key = $ConfigSchema.$Key.Default
+            }
+        }
+    }
     if($UpdateConfig) {
         if($SkipCred) {
             $Script:PSNeo4jConfig |

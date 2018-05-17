@@ -187,16 +187,16 @@ Describe "Get-Neo4jLabel $PSVersion" {
 Describe "New-Neo4jNode $PSVersion" {
     Mock Invoke-Neo4jQuery -ModuleName PSNeo4j
     It 'Should create a new node' {
-        New-Neo4jNode -Label Service -InputObject @{
+        New-Neo4jNode -Label Service -PassThru -InputObject @{
             Name = 'Active Directory'
             Engineer = 'Warren Frame'
         }
         Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
-            $Query -eq 'UNWIND {props} AS properties CREATE (node:Service) SET node = properties RETURN node' -and
-            $Parameters.keys -contains 'Name' -and
-            $Parameters.keys -contains 'Engineer' -and
-            $Parameters['Name'] -eq 'Active Directory' -and
-            $Parameters['Engineer'] -eq 'Warren Frame'
+            $Statements[0].Statement -eq 'UNWIND {props} AS properties CREATE (node:Service) SET node = properties RETURN node' -and
+            $Statements[0].Parameters.props[0].keys -contains 'Name' -and
+            $Statements[0].Parameters.props[0].keys -contains 'Engineer' -and
+            $Statements[0].Parameters.props[0]['Name'] -eq 'Active Directory' -and
+            $Statements[0].Parameters.props[0]['Engineer'] -eq 'Warren Frame'
         }
     }
 }

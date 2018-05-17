@@ -93,7 +93,7 @@ Describe "Remove-Neo4jConstraint $PSVersion" {
     It 'Drop unique constraints on multiple properties' {
         Remove-Neo4jConstraint -Label a -Property b, c -Unique
         Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
-            $Query -contains 'DROP CONSTRAINT ON (l:a) ASSERT l.b IS UNIQUE'
+            $Query -contains 'DROP CONSTRAINT ON (l:a) ASSERT l.b IS UNIQUE' -and
             $Query -contains 'DROP CONSTRAINT ON (l:a) ASSERT l.c IS UNIQUE'
         }
     }
@@ -104,7 +104,7 @@ Describe "New-Neo4jConstraint $PSVersion" {
     It 'Create unique constraints on multiple properties' {
         New-Neo4jConstraint -Label a -Property b, c -Unique
         Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
-            $Query -contains 'CREATE CONSTRAINT ON (l:a) ASSERT l.b IS UNIQUE'
+            $Query -contains 'CREATE CONSTRAINT ON (l:a) ASSERT l.b IS UNIQUE' -and
             $Query -contains 'CREATE CONSTRAINT ON (l:a) ASSERT l.c IS UNIQUE'
         }
     }
@@ -135,7 +135,7 @@ Describe "Remove-Neo4jIndex $PSVersion" {
     It 'Drop individual indexes on multiple properties' {
         Remove-Neo4jIndex -Label a -Property b, c
         Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
-            $Query -contains 'DROP INDEX ON :a(b)'
+            $Query -contains 'DROP INDEX ON :a(b)' -and
             $Query -contains 'DROP INDEX ON :a(c)'
         }
     }
@@ -162,7 +162,7 @@ Describe "New-Neo4jIndex $PSVersion" {
     It 'Create individual indexes on multiple properties' {
         New-Neo4jIndex -Label a -Property b, c
         Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
-            $Query -contains 'CREATE INDEX ON :a(b)'
+            $Query -contains 'CREATE INDEX ON :a(b)' -and
             $Query -contains 'CREATE INDEX ON :a(c)'
         }
     }
@@ -192,10 +192,10 @@ Describe "New-Neo4jNode $PSVersion" {
             Engineer = 'Warren Frame'
         }
         Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
-            $Query -eq 'UNWIND {props} AS properties CREATE (node:Service) SET node = properties RETURN node'
-            $Parameters.keys -contains 'Name'
-            $Parameters.keys -contains 'Engineer'
-            $Parameters['Name'] -eq 'Active Directory'
+            $Query -eq 'UNWIND {props} AS properties CREATE (node:Service) SET node = properties RETURN node' -and
+            $Parameters.keys -contains 'Name' -and
+            $Parameters.keys -contains 'Engineer' -and
+            $Parameters['Name'] -eq 'Active Directory' -and
             $Parameters['Engineer'] -eq 'Warren Frame'
         }
     }
@@ -206,20 +206,20 @@ Describe "Set-Neo4jNode $PSVersion" {
     It 'Should create a well formed MERGE query by default' {
         Set-Neo4jNode -Label Server -Hash @{ Name = 'Server01'} -InputObject @{ Description = 'Some description!' }
         Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
-            $Query -eq 'MERGE (set:Server {Name: $merge0Name}) ON CREATE SET set = {Name: $merge0Name, Description: $extra0Description} ON MATCH SET set += {Description: $extra0Description}'
-            $Parameters.keys -contains 'merge0Name'
-            $Parameters.keys -contains 'extra0Description'
-            $Parameters['merge0Name'] -eq 'Server01'
+            $Query -eq 'MERGE (set:Server {Name: $merge0Name}) ON CREATE SET set = {Name: $merge0Name, Description: $extra0Description} ON MATCH SET set += {Description: $extra0Description}' -and
+            $Parameters.keys -contains 'merge0Name' -and
+            $Parameters.keys -contains 'extra0Description' -and
+            $Parameters['merge0Name'] -eq 'Server01' -and
             $Parameters['extra0Description'] -eq 'Some description!'
         }
     }
     It 'Should create a well formed MATCH query if NoCreate is specified' {
         Set-Neo4jNode -Label Server -Hash @{ Name = 'Server01'} -InputObject @{ Description = 'Some description!' } -NoCreate
         Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
-            $Query -eq 'MATCH (set:Server {Name: $merge0Name}) SET set += {Description: $extra0Description}'
-            $Parameters.keys -contains 'merge0Name'
-            $Parameters.keys -contains 'extra0Description'
-            $Parameters['merge0Name'] -eq 'Server01'
+            $Query -eq 'MATCH (set:Server {Name: $merge0Name}) SET set += {Description: $extra0Description}' -and
+            $Parameters.keys -contains 'merge0Name' -and
+            $Parameters.keys -contains 'extra0Description' -and
+            $Parameters['merge0Name'] -eq 'Server01' -and
             $Parameters['extra0Description'] -eq 'Some description!'
         }
     }

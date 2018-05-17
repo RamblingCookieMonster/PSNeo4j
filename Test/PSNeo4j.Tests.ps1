@@ -223,7 +223,7 @@ Describe "Set-Neo4jNode $PSVersion" {
             $Parameters['extra0Description'] -eq 'Some description!'
         }
     }
-    It 'Should create a well formed MERGE query by default' {
+    It 'Should create a well formed MERGE query with no label specified' {
         Set-Neo4jNode -Hash @{ Name = 'Server01'} -InputObject @{ Description = 'Some description!' }
         Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
             $Query -eq 'MERGE (set {Name: $merge0Name}) ON CREATE SET set = {Name: $merge0Name, Description: $extra0Description} ON MATCH SET set += {Description: $extra0Description}' -and
@@ -233,7 +233,7 @@ Describe "Set-Neo4jNode $PSVersion" {
             $Parameters['extra0Description'] -eq 'Some description!'
         }
     }
-    It 'Should create a well formed MATCH query if NoCreate is specified' {
+    It 'Should create a well formed MATCH query if NoCreate is specified and with no label specified' {
         Set-Neo4jNode -Hash @{ Name = 'Server01'} -InputObject @{ Description = 'Some description!' } -NoCreate
         Assert-MockCalled Invoke-Neo4jQuery -ModuleName PSNeo4j -Exactly 1 -Scope It -ParameterFilter {
             $Query -eq 'MATCH (set {Name: $merge0Name}) SET set += {Description: $extra0Description}' -and

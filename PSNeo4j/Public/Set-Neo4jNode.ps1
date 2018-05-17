@@ -120,6 +120,10 @@
             [string[]]$PropsToUpdate = $InputObject.psobject.Properties.Name
         }
         $Count = 0
+
+        if($Label) {
+            $Label = ":$Label"
+        }
     }
     process {
         # We only pass in one parameter hash table, to avoid duplicates and collisions, we use a count and differentiate by merge-vs-set properties
@@ -148,10 +152,10 @@
                 $AllPropString = "{$AllPropString}"
             }
             if($NoCreate) {
-                $Query = "MATCH (set:$Label $MergePropString) SET set += $SetPropString"
+                $Query = "MATCH (set$Label $MergePropString) SET set += $SetPropString"
             }
             else {
-                $Query = "MERGE (set:$Label $MergePropString) ON CREATE SET set = $AllPropString ON MATCH SET set += $SetPropString"
+                $Query = "MERGE (set$Label $MergePropString) ON CREATE SET set = $AllPropString ON MATCH SET set += $SetPropString"
             }
             if($Passthru) {$Query = "$Query RETURN set"}
             $Count++

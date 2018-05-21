@@ -102,7 +102,10 @@
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential
+        $Credential =  $PSNeo4jConfig.Credential,
+
+        [validateset('NoParse', 'ByKeyword', 'ByValue')]
+        [string]$ParseDate = $PSNeo4jConfig.ParseDate
     )
     begin {
         if($PSCmdlet.ParameterSetName -eq 'Query') {
@@ -137,7 +140,7 @@
         Write-Verbose "$($Params | Format-List | Out-String)"
         $Response = $null
         $Response = Invoke-RestMethod @Params
-        $ConvertParams = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, As
+        $ConvertParams = . Get-ParameterValues -BoundParameters $PSBoundParameters -Invocation $MyInvocation -Properties MetaProperties, MergePrefix, As, ParseDate
         Write-Verbose "Params is $($ConvertParams | Format-List | Out-String)"
         ConvertFrom-Neo4jResponse @ConvertParams -Response $Response
     }

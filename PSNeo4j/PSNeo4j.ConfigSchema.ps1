@@ -23,4 +23,8 @@
         Type = [string]
         Default = 'Neo4j'
     }
+    ParseDate = @{
+        Type = [string]
+        Default = 'NoParse'
+    }
 }

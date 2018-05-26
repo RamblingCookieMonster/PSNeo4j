@@ -60,5 +60,6 @@ catch {
 finally {
     $PSNeo4jConfig = Initialize-PSNeo4jConfiguration -Passthru -ConfigSchema $ConfigSchema -UpdateConfig $False
 }
+$DatesConverted = ( ConvertFrom-JSON -InputObject '{"string":"/Date(1526867499647)/"}' ).string -is [DateTime]
 
 Export-ModuleMember -Function $Public.Basename

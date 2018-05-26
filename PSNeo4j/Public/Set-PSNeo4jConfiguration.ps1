@@ -60,6 +60,13 @@
 
         We default to the value specified by Set-PSNeo4jConfiguration (Initially, neo4j:neo4j)
 
+    .PARAMETER ParseDate
+        On Windows PowerShell, whether to inspect objects and attempt to parse properties that look like dates (e.g. '/Date(1526867499647)/')
+
+        NoParse:   Don't parse.  Faster
+        ByKeyword: Parse properties with 'Date' or 'Time' in their name
+        ByValue:   Parse properties with value matching something like '/Date(1526867499647)/'
+
     .FUNCTIONALITY
         Neo4j
     #>
@@ -76,6 +83,8 @@
         [validateset('id', 'type', 'deleted')]
         [string[]]$MetaProperties,
         [string]$MergePrefix,
+        [validateset('NoParse', 'ByKeyword', 'ByValue')]
+        [string]$ParseDate,
 
         [ValidateSet("User", "Machine", "Enterprise")]
         [string]$Scope = "User",

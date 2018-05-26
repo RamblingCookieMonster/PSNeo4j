@@ -53,7 +53,9 @@
         [string]$As = $PSNeo4jConfig.As,
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,
-        [string]$MergePrefix = $PSNeo4jConfig.MergePrefix
+        [string]$MergePrefix = $PSNeo4jConfig.MergePrefix,
+        [validateset('NoParse', 'ByKeyword', 'ByValue')]
+        [string]$ParseDate = $PSNeo4jConfig.ParseDate
     )
     if($As -eq 'Raw') {
         return $Response
@@ -106,6 +108,20 @@
                         if($Datum -is [hashtable]) {
                             $Datum = [pscustomobject]$Datum
                         }
+                        if(-not $Script:DatesConverted -and 'ByKeyword', 'ByValue' -contains $ParseDate) {
+
+                            if($ParseDate -eq 'ByKeyword') {
+                                $ParseProps = $Datum.psobject.properties.name.where({$_ -match 'Date|Time'})
+                            }
+                            if($ParseDate -eq 'ByValue') {
+                                $ParseProps = $Datum.psobject.properties.name
+                            }
+                            if($ParseProps.count -gt 0) {
+                                foreach($ParseProp in $ParseProps){
+                                    $Datum.$ParseProp = Parse-Neo4jDate -DateString $Datum.$ParseProp
+                                }
+                            }
+                        }
                     }
                     $Meta = $Data[$DataIndex].meta[$ColumnIndex]
                 }
@@ -154,6 +170,20 @@
                         $Datum = $Data[$DataIndex].row[$ColumnIndex].psobject.Copy()
                         if($Datum -is [hashtable]) {
                             $Datum = [pscustomobject]$Datum
+                        }
+                        if(-not $Script:DatesConverted -and 'ByKeyword', 'ByValue' -contains $ParseDate) {
+
+                            if($ParseDate -eq 'ByKeyword') {
+                                $ParseProps = $Datum.psobject.properties.name.where({$_ -match 'Date|Time'})
+                            }
+                            if($ParseDate -eq 'ByValue') {
+                                $ParseProps = $Datum.psobject.properties.name
+                            }
+                            if($ParseProps.count -gt 0) {
+                                foreach($ParseProp in $ParseProps){
+                                    $Datum.$ParseProp = Parse-Neo4jDate -DateString $Datum.$ParseProp
+                                }
+                            }
                         }
                     }
                     $Meta = $Data[$DataIndex].meta[$ColumnIndex]

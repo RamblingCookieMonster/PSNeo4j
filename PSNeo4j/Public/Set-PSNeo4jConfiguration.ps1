@@ -102,6 +102,7 @@
         'As' { $Script:PSNeo4jConfig.As = $As }
         'MetaProperties' { $Script:PSNeo4jConfig.MetaProperties = $MetaProperties }
         'MergePrefix' { $Script:PSNeo4jConfig.MergePrefix = $MergePrefix }
+        'ParseDate' { $Script:PSNeo4jConfig.ParseDate = $ParseDate }
     }
 
     if($UpdateConfig)

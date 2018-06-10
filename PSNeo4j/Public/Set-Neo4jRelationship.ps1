@@ -6,28 +6,43 @@ function Set-Neo4jRelationship {
     .DESCRIPTION
         Update or create Neo4j relationships
 
-        Creates a new relationship if type/hash don't match anything.  Use NoCreate parameter to avoid creating new nodes
+        Creates a new relationship if type/hash don't match anything.  Use NoCreate parameter to avoid creating new relationships
 
     .EXAMPLE
-        Set-Neo4jRelationship -Label Server -Hash @{ Name = 'Server01'} -InputObject @{ Description = 'Some description!' }
+        Set-Neo4jRelationship -LeftLabel Server -LeftHash @{Name = 'Server01'} `
+                              -RightLabel Server -RightHash @{Name='Server02'} `
+                              -Type SomeRelationship -Properties @{a=1;b=2}
 
-        # Look for a node with the label 'Server' and Name 'Server01.
-        #   If we find any, update the Description to 'Some description!'
-        #   If we don't find any, create a note with the specific Label, Name, and Description
-
-    .EXAMPLE
-        @{ Name = 'Server01'}, @{ Name = 'Server02'} | Set-Neo4jNode -Label Server -InputObject @{ Description = 'Some description!' }
-
-        # Look for a node with the label 'Server' and Name 'Server01.
-        #   If we find any, update the Description to 'Some description!'
-        #   If we don't find any, create a note with the specific Label, Name, and Description
-        # Repeat, for nodes with label Server, Name 'Server02'
+        # Find any relationship...
+        #   with type IsDupe
+        #   that starts at a server named Server01 and ends at a server named Server02
+        # Create a relationship if none are found
+        # Add or set properties a and b on the relationship, leaving any existing properties alone
 
     .EXAMPLE
-        Set-Neo4jNode -Label Server -Hash @{ SomeProperty = 'OldValue'} -InputObject @{ SomeProperty = 'NewValue' } -NoCreate
+        Set-Neo4jRelationship -LeftQuery "MATCH (left:Server {Name: 'Server01'})" `
+                              -RightQuery "MATCH (right:Server {Name: 'Server02'})" `
+                              -Hash @{b=2} `
+                              -Type SomeRelationship -Properties @{a=1;b='five'}
 
-        # Look for a node with label 'Server' and SomeProperty 'OldValue' and switch SomeProperty to 'NewValue'
-        # Do not create a new node if we don't find a node with Label Server, SomeProperty 'OldValue'
+        # Find any relationship...
+        #   with type IsDupe
+        #   that starts at a server named Server01 and ends at a server named Server02
+        #   that has a property 'b' with value 2
+        # Create a relationship if none are found
+        # Add or set b to 'five' on the relationship, leaving any existing properties alone
+
+    .EXAMPLE
+        Set-Neo4jRelationship -LeftLabel Server -LeftHash @{Name = 'Server01'} `
+                              -RightLabel Server -RightHash @{Name='Server02'} `
+                              -Type IsDupe -Properties @{a=1;b=2} `
+                              -NoCreate
+
+        # Find any relationship...
+        #   with type IsDupe
+        #   that starts at a server named Server01 and ends at a server named Server02
+        # Do not create a relationship in any scenario - only update existing if found
+        # Add or set properties a and b on the relationship, leaving any existing properties alone
 
     .PARAMETER Type
         Set relationship with this type
@@ -37,10 +52,12 @@ function Set-Neo4jRelationship {
     .PARAMETER Hash
         One or more hashtables containing properties and values corresponding to relationships we will set
 
+        If none are specified, update all relationships with the specified -Type
+
         Warning: susceptible to query injection (keys only. values are parameterized)
 
-    .PARAMETER InputObject
-        One or more objects containing properties and values to add to matched relationships
+    .PARAMETER Properties
+        Hashtable of properties to add to matched relationships
 
         Warning: susceptible to query injection (keys/property names only. values are parameterized)
 
@@ -114,7 +131,7 @@ function Set-Neo4jRelationship {
         [parameter( ParameterSetName = 'Query')]
         [hashtable]$Parameters,
 
-
+        [parameter(Mandatory = $True )]
         [string]$Type,
         [parameter(ValueFromPipeline=$True)]
         [hashtable]$Hash,
@@ -178,10 +195,6 @@ function Set-Neo4jRelationship {
             }
         }
 
-        if($Passthru) {
-            $Return = 'RETURN relationship'
-        }
-
         $RelationshipKeys = @()
         if($Hash.keys.count -gt 0) {
             [string[]]$RelationshipKeys = foreach($Property in $Hash.Keys) {
@@ -198,8 +211,8 @@ function Set-Neo4jRelationship {
                 "${Property}: `$relationship$Property"
                 $SQLParams.Add("relationship$Property", $Properties[$Property])
             }
-            $SetRelationshipString = $RelationshipProperties -join ','
-            $SetRelationshipString = "ON MATCH SET relationship += {$SetRelationshipString}"
+            $SetRelationshipPropString = $RelationshipProperties -join ','
+            $SetRelationshipString = "ON MATCH SET relationship += {$SetRelationshipPropString}"
 
             $AllProperties = $RelationshipProperties + $RelationshipKeys
             $AllRelationshipString = $AllProperties -join ","
@@ -211,7 +224,7 @@ function Set-Neo4jRelationship {
 $LeftQuery
 $RightQuery
 MATCH (left)-[relationship:$Type $RelationshipKeyString]->(right)
-SET relationship += $SetRelationshipString
+SET relationship += {$SetRelationshipPropString}
 "@
         }
         else {

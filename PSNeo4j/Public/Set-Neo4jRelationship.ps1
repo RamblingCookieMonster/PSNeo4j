@@ -242,6 +242,15 @@ $SetRelationshipString
         [void]$Queries.Add($Query)
     }
     end {
+        if($PSBoundParameters.ContainsKey('Parameters')) {
+            foreach($Property in $Parameters.keys) {
+                if($SQLParams.ContainsKey($Property)){
+                    Write-Warning "Skipping duplicate parameter $Property with value $($Parameters[$Property])"
+                    continue
+                }
+                $SQLParams.Add("$Property", $Parameters[$Property])
+            }
+        }
         if($SQLParams.Keys.count -gt 0) {
             $InvokeParams.add('Parameters', $SQLParams)
         }

@@ -49,6 +49,8 @@
             Raw:           We don't touch the response                           ($Response)
             Results:       We expand the 'results' property on the response      ($Response.results)
             Row:           We expand the 'row' property on the responses results ($Response.results.data.row)
+            Graph:         We expand the 'nodes' and 'relationships' properties and remove...
+                           duplicates on the responses results                   ($Response.results.data.graph)
 
         We default to the value specified by Set-PSNeo4jConfiguration (Initially, 'Parsed')
 
@@ -91,8 +93,10 @@
         [parameter(ParameterSetName='Query',
                    Position = 1)]
         [hashtable]$Parameters,
+        [parameter(ParameterSetName='Query')]
+        [switch]$AsGraph,
 
-        [validateset('Raw', 'Results', 'Row', 'Parsed', 'ParsedColumns')]
+        [validateset('Raw', 'Results', 'Row', 'Parsed', 'ParsedColumns','Graph')]
         [string]$As = $PSNeo4jConfig.As,
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,
@@ -123,6 +127,12 @@
                 }
                 if($PSBoundParameters.ContainsKey('Parameters')) {
                     Add-Member -InputObject $Statement -Name 'parameters' -Value $Parameters -MemberType NoteProperty
+                }
+                if($AsGraph.IsPresent) {
+                    Add-Member -InputObject $Statement -Name 'resultDataContents' -Value ([string[]]('graph')) -MemberType NoteProperty
+                    if ($As -notin 'Raw','Graph') {
+                        Write-Warning 'When using the AsGraph switch, be sure to set As-parameter to Raw or Graph'
+                    }
                 }
                 [void]$AllStatements.add($Statement)
             }

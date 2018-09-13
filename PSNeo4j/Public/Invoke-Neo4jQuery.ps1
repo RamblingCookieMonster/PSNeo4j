@@ -130,6 +130,9 @@
                 }
                 if($AsGraph.IsPresent) {
                     Add-Member -InputObject $Statement -Name 'resultDataContents' -Value ([string[]]('graph')) -MemberType NoteProperty
+                    if (-not $PSBoundParameters.ContainsKey('As')) {
+                        $As = 'Graph'
+                    }
                     if ($As -notin 'Raw','Graph') {
                         Write-Warning 'When using the AsGraph switch, be sure to set As-parameter to Raw or Graph'
                     }

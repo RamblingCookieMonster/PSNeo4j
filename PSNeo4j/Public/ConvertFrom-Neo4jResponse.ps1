@@ -24,6 +24,8 @@
             Raw:     We don't touch the response                           ($Response)
             Results: We expand the 'results' property on the response      ($Response.results)
             Row:     We expand the 'row' property on the responses results ($Response.results.data.row)
+            Graph:   We expand the 'nodes' and 'relationships' properties and remove...
+                     duplicates on the responses results                   ($Response.results.data.graph)
 
         -As Parsed does a few things:
           * Merges specified 'Meta' information about each item returned
@@ -49,7 +51,7 @@
     [cmdletbinding()]
     param(
         $Response,
-        [validateset('Raw', 'Results', 'Row', 'Parsed', 'ParsedColumns')]
+        [validateset('Raw', 'Results', 'Row', 'Parsed', 'ParsedColumns', 'Graph')]
         [string]$As = $PSNeo4jConfig.As,
         [validateset('id', 'type', 'deleted')]
         [string]$MetaProperties = $PSNeo4jConfig.MetaProperties,
@@ -78,7 +80,31 @@
     if($Response.psobject.properties.name -contains 'results') {
         #return
     }
+    If($As -eq 'Graph') {
+        $tmp_nodes = @{}
+        $tmp_relationships = @{}
 
+        foreach ($node in $Response.results.data.graph.nodes)
+        {
+            if (-not $tmp_nodes.ContainsKey($node.id))
+            {
+                $tmp_nodes.Add($node.id,$node)
+            }
+        }
+
+        foreach ($relationship in $Response.results.data.graph.relationships)
+        {
+            if (-not $tmp_relationships.ContainsKey($relationship.id))
+            {
+                $tmp_relationships.Add($relationship.id,$relationship)
+            }
+        }
+
+        return [PSCustomObject][Ordered]@{
+            nodes = [object[]]$tmp_nodes.Values
+            relationships = [object[]]$tmp_relationships.Values
+        }
+    }
     If($As -eq 'Results') {
         return $Response.results
     }

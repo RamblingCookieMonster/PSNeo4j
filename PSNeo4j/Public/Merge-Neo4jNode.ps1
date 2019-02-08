@@ -1,10 +1,10 @@
 ﻿function Merge-Neo4jNode {
     <#
     .SYNOPSIS
-       Add Neo4j nodes
+       Merge Neo4j nodes
 
     .DESCRIPTION
-       Add Neo4j nodes
+       Merge Neo4j nodes
 
     .EXAMPLE
         [pscustomobject]@{
@@ -19,29 +19,32 @@
             ComputerName = 'web01'
             Domain = 'some.domain'
         } |
-            New-Neo4jNode -Label Server -Passthru
+            Merge-Neo4jNode -Label Server -Passthru -Identifiers "ComputerName"
 
-        # Create three nodes with the label 'Server', and specified properties from the pipeline, and return the resulting nodes
+        # Create or merge three nodes with the label 'Server', check for duplicates based on ComputerName, and specified properties from the pipeline, and return the resulting nodes
 
     .EXAMPLE
-        New-Neo4jNode -Label Service -InputObject @{
+        Merge-Neo4jNode -Label Service -InputObject @{
             Name = 'Active Directory'
             Engineer = 'Warren Frame'
-        }
+        } -Identifiers "ComputerName"
 
-        # Create a node with the label 'Service' and the specified properties
+        # Merge or create a node with the label 'Service' and the specified properties, check for duplicates based on ComputerName
 
     .PARAMETER Label
-        Create node with this label
+        Create / merge node with this label
 
         If more than one label is provided, create node with multiple labels
 
-        Warning: susceptible to query injection
+    .PARAMETER Identifiers
+        Create / merge nodes found with properties specified by Identifiers
+
+        If more than one Identifier is provided, the match is treated as restrictive "AND" clauses
 
     .PARAMETER InputObject
         One or more objects containing properties and values to add to this node.
 
-        If more than one object is specified, we create multiple nodes
+        If more than one object is specified, we create / merge multiple nodes
 
     .PARAMETER Passthru
         If specified, we return the resulting nodes

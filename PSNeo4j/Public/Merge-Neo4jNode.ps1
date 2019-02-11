@@ -105,13 +105,7 @@
         [System.Management.Automation.Credential()]
         $Credential =  $PSNeo4jConfig.Credential
     )
-    begin {
-        $Params = @{            
-            Hash = ($InputObject | Select-Object $Identifiers | ConvertTo-Hash);
-            InputObject = ($InputObject | ConvertTo-Hash);
-            Label = $Label
-        }            
-            
+    begin {            
         #Add the rest params for splat
         if ($As) { $Params.add("As", $As) }
         if ($MetaProperties) { $Params.add("MetaProperties", $MetaProperties) }
@@ -121,6 +115,11 @@
     }
     process {
         foreach($Object in $InputObject) {
+            $Params = @{            
+                Hash = ($Object | Select-Object $Identifiers | ConvertTo-Hash);
+                InputObject = ($Object | ConvertTo-Hash);
+                Label = $Label
+            }            
             Set-Neo4jNode @Params -Verbose:$Verbose -NoCreate:$NoCreate -Passthru:$Passthru
         }
     }

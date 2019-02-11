@@ -118,13 +118,10 @@
         if ($MergePrefix) { $Params.add("MergePrefix", $MergePrefix) }
         if ($BaseUri) { $Params.add("BaseUri", $BaseUri) }
         if ($Credential) { $Params.add("Credential", $Credential) }
-        if ($Verbose) { $Params.add("Verbose") }
-        if ($NoCreate) { $Params.add("NoCreate") }
-        if ($Passthru) { $Params.add("Passthru") }
     }
     process {
         foreach($Object in $InputObject) {
-            Set-Neo4jNode @Params
+            Set-Neo4jNode @Params -Verbose:$Verbose -NoCreate:$NoCreate -Passthru:$Passthru
         }
     }
 }

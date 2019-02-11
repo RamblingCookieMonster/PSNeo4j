@@ -107,7 +107,7 @@
     )
     begin {
         $Params = @{            
-            Hash = ($Object | Select-Object $Identifiers | ConvertTo-Hash);
+            Hash = ($InputObject | Select-Object $Identifiers | ConvertTo-Hash);
             InputObject = ($Object | ConvertTo-Hash);
             Label = $Label
         }            

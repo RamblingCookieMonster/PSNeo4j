@@ -194,13 +194,16 @@
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential
+        $Credential =  $PSNeo4jConfig.Credential,
+
+        [switch]$ParseDateInput = $PSNeo4jConfig.ParseDateInput
     )
     $SQLParams = @{}
 
     if($PSCmdlet.ParameterSetName -eq 'LabelHash') {
         $LeftPropString = $null
         if($LeftHash.keys.count -gt 0) {
+            $LeftHash = ConvertTo-Neo4jDateTime $LeftHash -ParseDateInput $ParseDateInput
             $Props = foreach($Property in $LeftHash.keys) {
                 "$Property`: `$left$Property"
                 $SQLParams.Add("left$Property", $LeftHash[$Property])
@@ -215,6 +218,7 @@
 
         $RightPropString = $null
         if($RightHash.keys.count -gt 0) {
+            $RightHash = ConvertTo-Neo4jDateTime $RightHash -ParseDateInput $ParseDateInput
             $Props = foreach($Property in $RightHash.keys) {
                 "$Property`: `$right$Property"
                 $SQLParams.Add("right$Property", $RightHash[$Property])
@@ -235,6 +239,7 @@
     $InvokeParams = @{}
     $PropString = $null
     if($Properties) {
+        $Properties = ConvertTo-Neo4jDateTime $Properties -ParseDateInput $ParseDateInput
         $Props = foreach($Property in $Properties.keys) {
             "$Property`: `$relationship$Property"
             $SQLParams.Add("relationship$Property", $Properties[$Property])
@@ -243,6 +248,7 @@
         $PropString = "{$PropString}"
     }
     if($PSBoundParameters.ContainsKey('Parameters')) {
+        $Parameters = ConvertTo-Neo4jDateTime $Parameters -ParseDateInput $ParseDateInput
         foreach($Property in $Parameters.keys) {
             $SQLParams.Add("$Property", $Parameters[$Property])
         }

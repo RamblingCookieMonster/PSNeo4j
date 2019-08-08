@@ -41,7 +41,9 @@ function ConvertTo-Neo4jNodesStatement {
         [string[]]$Label,
         [parameter(ValueFromPipeline=$True)]
         [object[]]$InputObject,
-        [switch]$Passthru
+        [switch]$Passthru,
+
+        [switch]$ParseDateInput = $PSNeo4jConfig.ParseDateInput
     )
     begin {
         $LabelString = $Label -join ':'
@@ -51,6 +53,7 @@ function ConvertTo-Neo4jNodesStatement {
     }
     process {
         foreach($Item in $InputObject) {
+            $Item = ConvertTo-Neo4jDateTime $Item -ParseDateInput $ParseDateInput
             [void]$Props.add($Item)
         }
     }

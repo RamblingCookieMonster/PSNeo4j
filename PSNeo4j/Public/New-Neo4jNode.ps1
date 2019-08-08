@@ -98,13 +98,16 @@
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential
+        $Credential =  $PSNeo4jConfig.Credential,
+
+        [switch]$ParseDateInput = $PSNeo4jConfig.ParseDateInput
     )
     begin {
         $Objects = [System.Collections.ArrayList]@()
     }
     process {
         foreach($Object in $InputObject) {
+            $Object = ConvertTo-Neo4jDateTime $Object -ParseDateInput $ParseDateInput
             [void]$Objects.add($Object)
         }
     }

@@ -107,12 +107,15 @@
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential
+        $Credential =  $PSNeo4jConfig.Credential,
+
+        [switch]$ParseDateInput = $PSNeo4jConfig.ParseDateInput
     )
     begin {
         $Queries = [System.Collections.ArrayList]@()
         $SQLParams = @{}
         $InvokeParams = @{}
+        $InputObject = ConvertTo-Neo4jDateTime $InputObject -ParseDateInput $ParseDateInput
         if($InputObject -is [hashtable]) {
             $PropsToUpdate = $InputObject.Keys
         }
@@ -130,7 +133,8 @@
         # We need three parameterized property strings: for MERGE (the identifying bits), ON CREATE SET (all the bits), ON MATCH SET (the bits to update)
         foreach($PropHash in $Hash) {
             $MergePropString = $null
-            if($Hash.keys.count -gt 0) {
+            if($PropHash.keys.count -gt 0) {
+                $PropHash = ConvertTo-Neo4jDateTime $PropHash -ParseDateInput $ParseDateInput
                 [string[]]$MergeProps = foreach($Property in $PropHash.keys) {
                     "$Property`: `$merge$Count$Property"
                     $SQLParams.Add("merge$Count$Property", $PropHash[$Property])

@@ -67,6 +67,21 @@
         ByKeyword: Parse properties with 'Date' or 'Time' in their name
         ByValue:   Parse properties with value matching something like '/Date(1526867499647)/'
 
+    .PARAMETER ParseDatePatterns
+        How to parse properties that might be dates, if ParseDate is configured
+
+        DateTimeO:       Parse properties with value in a format consistent with Get-Date -Format o (e.g. 2019-08-07T23:50:03.1734728-04:00)
+        DateWithEpochMs: Parse properties with value in a format consistent with '/Date(1526867499647)/'
+
+        Defaults to DateTimeO, DateWithEpochMS.  Not parsing, or parsing a single pattern may offer a small improvement to performance
+
+    .PARAMETER ParseDateInput
+        If specified, convert any datetime property on every object (nodes, relationships) to the format consistent with Get-Date -Format o
+
+        This allows Neo4j to parse the string as a DateTime in queries
+
+        Defaults to $True
+
     .FUNCTIONALITY
         Neo4j
     #>
@@ -85,6 +100,9 @@
         [string]$MergePrefix,
         [validateset('NoParse', 'ByKeyword', 'ByValue')]
         [string]$ParseDate,
+        [validateset('DateWithEpochMs', 'DateTimeO')]
+        [string[]]$ParseDatePatterns,
+        [bool]$ParseDateInput,
 
         [ValidateSet("User", "Machine", "Enterprise")]
         [string]$Scope = "User",
@@ -103,6 +121,8 @@
         'MetaProperties' { $Script:PSNeo4jConfig.MetaProperties = $MetaProperties }
         'MergePrefix' { $Script:PSNeo4jConfig.MergePrefix = $MergePrefix }
         'ParseDate' { $Script:PSNeo4jConfig.ParseDate = $ParseDate }
+        'ParseDateInput' { $Script:PSNeo4jConfig.ParseDateInput = $ParseDateInput }
+        'ParseDatePatterns' { $Script:PSNeo4jConfig.ParseDatePatterns = $ParseDatePatterns }
     }
 
     if($UpdateConfig)

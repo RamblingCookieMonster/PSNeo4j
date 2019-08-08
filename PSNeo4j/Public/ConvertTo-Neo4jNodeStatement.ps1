@@ -34,8 +34,11 @@
     param(
         [string[]]$Label,
         [object]$Props,
-        [switch]$Passthru
+        [switch]$Passthru,
+
+        [switch]$ParseDateInput = $PSNeo4jConfig.ParseDateInput
     )
+    $Props = ConvertTo-Neo4jDateTime $Props -ParseDateInput $ParseDateInput
     $LabelString = $Label -join ':'
     $Query = "CREATE (node:$LabelString { props } )"
     if($Passthru) {$Query = "$Query RETURN node"}

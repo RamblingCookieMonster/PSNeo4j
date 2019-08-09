@@ -27,4 +27,12 @@
         Type = [string]
         Default = 'NoParse'
     }
+    ParseDatePatterns = @{
+        Type = [string[]]
+        Default = 'DateTimeO', 'DateWithEpochMs'
+    }
+    ParseDateInput = @{
+        Type = [System.Boolean]
+        Default = $True
+    }
 }

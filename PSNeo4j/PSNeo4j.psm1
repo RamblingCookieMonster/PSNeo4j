@@ -4,14 +4,11 @@
     $ModuleRoot = $PSScriptRoot
 
 #Dot source the files
-Foreach($import in @($Public + $Private))
-{
-    Try
-    {
+Foreach($import in @($Public + $Private)) {
+    Try {
         . $import.fullname
     }
-    Catch
-    {
+    Catch {
         Write-Error -Message "Failed to import function $($import.fullname): $_"
     }
 }

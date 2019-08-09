@@ -4,7 +4,7 @@
 RootModule = 'PSNeo4j.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.30'
+ModuleVersion = '0.1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -99,7 +99,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        # ReleaseNotes = ''
+        ReleaseNotes = 'Added date parsing consistent with "Get-Date -Format o" for input and output'
 
     } # End of PSData hashtable
 

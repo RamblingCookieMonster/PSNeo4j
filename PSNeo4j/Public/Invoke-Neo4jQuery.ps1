@@ -109,7 +109,9 @@
         $Credential =  $PSNeo4jConfig.Credential,
 
         [validateset('NoParse', 'ByKeyword', 'ByValue')]
-        [string]$ParseDate = $PSNeo4jConfig.ParseDate
+        [string]$ParseDate = $PSNeo4jConfig.ParseDate,
+
+        [switch]$ParseDateInput = $PSNeo4jConfig.ParseDateInput
     )
     begin {
         if($PSCmdlet.ParameterSetName -eq 'Query') {
@@ -126,6 +128,9 @@
                     statement = $QueryString
                 }
                 if($PSBoundParameters.ContainsKey('Parameters')) {
+                    if($ParseDateInput){
+                        $Parameters = ConvertTo-Neo4jDateTime $Parameters -ParseDateInput $ParseDateInput
+                    }
                     Add-Member -InputObject $Statement -Name 'parameters' -Value $Parameters -MemberType NoteProperty
                 }
                 if($AsGraph.IsPresent) {

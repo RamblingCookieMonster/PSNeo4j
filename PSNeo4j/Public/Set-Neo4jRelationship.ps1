@@ -150,7 +150,9 @@ function Set-Neo4jRelationship {
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential =  $PSNeo4jConfig.Credential
+        $Credential =  $PSNeo4jConfig.Credential,
+
+        [switch]$ParseDateInput = $PSNeo4jConfig.ParseDateInput
     )
     begin {
         $Queries = [System.Collections.ArrayList]@()
@@ -168,7 +170,8 @@ function Set-Neo4jRelationship {
         if($PSCmdlet.ParameterSetName -eq 'LabelHash') {
             $LeftPropString = $null
             if($LeftHash.keys.count -gt 0) {
-                $Props = foreach($Property in $LeftHash.keys) {
+                $LeftHash = ConvertTo-Neo4jDateTime $LeftHash -ParseDateInput $ParseDateInput
+                $Props = foreach($Property in $($LeftHash.keys)) {
                     "$Property`: `$left$Count$Property"
                     $SQLParams.Add("left$Count$Property", $LeftHash[$Property])
                 }
@@ -182,6 +185,7 @@ function Set-Neo4jRelationship {
 
             $RightPropString = $null
             if($RightHash.keys.count -gt 0) {
+                ConvertTo-Neo4jDateTime $RightHash -ParseDateInput $ParseDateInput
                 $Props = foreach($Property in $RightHash.keys) {
                     "$Property`: `$right$Count$Property"
                     $SQLParams.Add("right$Count$Property", $RightHash[$Property])
@@ -197,6 +201,7 @@ function Set-Neo4jRelationship {
 
         $RelationshipKeys = @()
         if($Hash.keys.count -gt 0) {
+            ConvertTo-Neo4jDateTime $Hash -ParseDateInput $ParseDateInput
             [string[]]$RelationshipKeys = foreach($Property in $Hash.Keys) {
               "${Property}: `$key$Count$Property"
               $SQLParams.Add("key$Count$Property", $Hash[$Property])
@@ -207,6 +212,7 @@ function Set-Neo4jRelationship {
 
         $RelationshipProperties = $null
         if($Properties) {
+            $Properties = ConvertTo-Neo4jDateTime $Properties -ParseDateInput $ParseDateInput
             [string[]]$RelationshipProperties = foreach($Property in $Properties.keys) {
                 "${Property}: `$relationship$Property"
                 $SQLParams.Add("relationship$Property", $Properties[$Property])
@@ -243,6 +249,7 @@ $SetRelationshipString
     }
     end {
         if($PSBoundParameters.ContainsKey('Parameters')) {
+            $Parameters = ConvertTo-Neo4jDateTime $Parameters -ParseDateInput $ParseDateInput
             foreach($Property in $Parameters.keys) {
                 if($SQLParams.ContainsKey($Property)){
                     Write-Warning "Skipping duplicate parameter $Property with value $($Parameters[$Property])"

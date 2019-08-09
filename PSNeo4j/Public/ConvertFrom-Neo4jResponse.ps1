@@ -135,7 +135,7 @@
                             $Datum = [pscustomobject]$Datum
                         }
                         if(-not $Script:DatesConverted -and 'ByKeyword', 'ByValue' -contains $ParseDate) {
-
+                            
                             if($ParseDate -eq 'ByKeyword') {
                                 $ParseProps = $Datum.psobject.properties.name.where({$_ -match 'Date|Time'})
                             }
@@ -144,7 +144,7 @@
                             }
                             if($ParseProps.count -gt 0) {
                                 foreach($ParseProp in $ParseProps){
-                                    $Datum.$ParseProp = Parse-Neo4jDate -DateString $Datum.$ParseProp
+                                    $Datum.$ParseProp = Parse-Neo4jDate -DateString $Datum.$ParseProp -ParseDatePatterns $PSNeo4jConfig.ParseDatePatterns
                                 }
                             }
                         }
@@ -207,7 +207,7 @@
                             }
                             if($ParseProps.count -gt 0) {
                                 foreach($ParseProp in $ParseProps){
-                                    $Datum.$ParseProp = Parse-Neo4jDate -DateString $Datum.$ParseProp
+                                    $Datum.$ParseProp = Parse-Neo4jDate -DateString $Datum.$ParseProp -ParseDatePatterns $PSNeo4jConfig.ParseDatePatterns
                                 }
                             }
                         }
